@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+
+  web:
+    build:
+      context: ./docker/web
+    volumes:
+      - ./:/app:ro
+      # - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - ${WEB_PORT}:80
+    environment:
+      CLIENT_MAX_BODY_SIZE: 100M
+      GLOBAL_MAX_BODY_SIZE: 100M
+    
+    tty: true
+    working_dir: /app
+    
+
+  php:
+    build:
+      context: ./docker/php
+      args:
+        - PUID=${PUID}
+        - PGID=${PGID}
+    volumes:
+      - ./shinyReadingJournal:/app
+    working_dir: /app
+
+  node:
+    image: node:lts-alpine
+    volumes:
+      - ./shinyReadingJournal:/app
+    working_dir: /app
+    user: ${PUID}:${PGID}
+    env_file:
+      - ./.env
+    tty: true
+
+    ports:
+      - ${DEV_PORT}:${DEV_PORT}
+  
+#  data:
+#    image: mysql:8.0.23
+#    container_name: dataBase
+#    restart: unless-stopped
+#    tty: true
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#      MYSQL_DATABASE: ${MYSQL_DATABASE}
+#      MYSQL_USER: ${MYSQL_USER}
+#      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+#    ports:
+#      - ${MYSQL_EXTERNAL_PORT}:3306
+#    volumes:
+#      - db-data:/var/lib/mysql
+#
+volumes:
+  db-data:

@@ -1,0 +1,8 @@
+FROM nginx:latest
+
+#RUN apk add --update less
+RUN apt-get update && apt-get -y install less nano 
+
+RUN sed -i 's/text\/css\s\+css;/text\/css css plain;/' /etc/nginx/mime.types
+
+COPY site.conf /etc/nginx/nginx.conf
