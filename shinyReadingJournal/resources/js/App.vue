@@ -1,7 +1,7 @@
 <script>
 
 //import Books from "./components/Books.vue";
-import Navbar from './Navbar.vue';
+import Navbar from './components/Navbar.vue';
 
 
 export default {
