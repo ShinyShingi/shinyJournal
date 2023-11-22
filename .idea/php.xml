@@ -104,6 +104,34 @@
       <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/tijsverkoyen/css-to-inline-styles" />
       <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/nunomaduro/termwind" />
       <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/laravel/ui" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/dasprid/enum" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/paragonie/constant_time_encoding" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/pragmarx/google2fa" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/bacon/bacon-qr-code" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/clock" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/dflydev/dot-access-data" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/mobiledetect/mobiledetectlib" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/laravel/jetstream" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/laravel/fortify" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/fruitcake/php-cors" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/guzzlehttp/uri-template" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/shinyReadingJournal/vendor/livewire/livewire" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

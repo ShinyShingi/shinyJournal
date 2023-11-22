@@ -41,20 +41,20 @@ services:
     ports:
       - ${DEV_PORT}:${DEV_PORT}
 
-#  db:
-#    image: mysql:8.0.23
-#    container_name: data
-#    restart: unless-stopped
-#    tty: true
-#    environment:
-#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-#      MYSQL_DATABASE: ${MYSQL_DATABASE}
-#      MYSQL_USER: ${MYSQL_USER}
-#      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-#    ports:
-#      - ${MYSQL_EXTERNAL_PORT}:3306
-#    volumes:
-#      - db-data:/var/lib/mysql
-#
-#volumes:
-#  db-data:
+  data:
+    image: mysql:8.0.23
+    container_name: data
+    restart: unless-stopped
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - ${MYSQL_EXTERNAL_PORT}:3306
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
