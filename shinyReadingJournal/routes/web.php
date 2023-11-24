@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-require __DIR__.'/auth.php';
+//require __DIR__.'/auth.php';
 
 Route::get('/', function () {
     return view('home');
@@ -27,17 +28,9 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
-Route::get('/register', 'App\Http\Controllers\Auth\RegisteredUserController@create')
-    ->name('register');
 
-Route::post('/register', 'App\Http\Controllers\Auth\RegisteredUserController@store');
 
-// Login Routes...
-Route::get('/login', 'App\Http\Controllers\Auth\AuthenticatedSessionController@create')
-    ->name('login');
 
-Route::post('/login', 'App\Http\Controllers\Auth\AuthenticatedSessionController@store');
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// Logout Route...
-Route::post('/logout', 'App\Http\Controllers\Auth\AuthenticatedSessionController@destroy')
-    ->name('logout');
