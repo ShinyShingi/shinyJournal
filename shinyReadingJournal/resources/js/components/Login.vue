@@ -19,6 +19,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="submitForm">Login</v-btn>
+                <v-btn color="red" text @click="signInWithGoogle">Sign in with Google</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -42,6 +43,9 @@ export default {
             password: ''
         };
     },
+    // mounted() {
+    //     this.loadGoogleApiScript();
+    // },
     methods: {
         async submitForm() {
             try {
@@ -49,18 +53,49 @@ export default {
                     email: this.email,
                     password: this.password
                 });
-                localStorage.setItem('token', response.data.token); // Store the token
+                localStorage.setItem('token', response.data.token);
+                this.$emit('login-successful'); // Emit the event here
                 this.$router.push({ name: 'UserProfile' });
             } catch (error) {
                 console.error(error);
             }
+
             this.closeDialog();
         },
         closeDialog() {
             this.dialog = false;
             this.$emit('update:showDialog', false); // Notify parent to update the prop
             this.$emit('close-modal');
-        }
+        },
+        // loadGoogleApiScript() {
+        //     if (document.querySelector('script[src="https://apis.google.com/js/platform.js"]')) {
+        //         return;
+        //     }
+        //
+        //     const script = document.createElement('script');
+        //     script.src = 'https://apis.google.com/js/platform.js';
+        //     script.async = true;
+        //     script.defer = true;
+        //     document.head.appendChild(script);
+        //
+        //     script.onload = () => this.initializeGoogleAPI();
+        // },
+        // initializeGoogleAPI() {
+        //     gapi.load('auth2', () => {
+        //         gapi.auth2.init({
+        //             client_id: '800650533712-on2c09fdi5k91vgj5lglkofnsrqek6eb.apps.googleusercontent.com',
+        //             // Additional configuration options
+        //         });
+        //     });
+        // },
+        //
+        // signInWithGoogle() {
+        //     const auth2 = gapi.auth2.getAuthInstance();
+        //     auth2.signIn().then(googleUser => {
+        //         this.$router.push('/profile');
+        //     });
+        // }
+
     }
 };
 </script>

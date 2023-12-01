@@ -18,6 +18,9 @@ use App\Http\Controllers\AuthController;
 Route::get('/', function () {
     return view('home');
 });
+Route::get('/{any}', function () {
+    return view('home'); // Replace 'your_main_view' with the name of your main blade file
+})->where('any', '.*');
 
 Route::middleware([
     'auth:sanctum',

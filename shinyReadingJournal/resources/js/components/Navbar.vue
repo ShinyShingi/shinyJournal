@@ -18,11 +18,25 @@
 </template>
 
 <script>
+import { inject } from 'vue';
+
 export default {
     name: 'Navbar',
+    props: {
+        authState: Object
+    },
+    setup() {
+        const authState = inject('authState');
+        return { authState };
+    },
     computed: {
         isLoggedIn() {
+            return this.authState.isLoggedIn;
+        },
+        isLoggedIn2() {
+
             return !!localStorage.getItem('token');
+
         }
     },
     methods: {
@@ -36,10 +50,13 @@ export default {
         },
         logout() {
             localStorage.removeItem('token');
-            this.$router.push({ path: '/' });        },
+            this.$emit('logout-successful'); // Emit an event on successful logout
+            this.$router.push({path: '/'});
+        },
         register() {
             this.$emit('register-click');
-        }
+        },
+
     }
 };
 </script>

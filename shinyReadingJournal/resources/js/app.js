@@ -5,6 +5,7 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import router from './router.js';
+import { reactive, provide, inject } from "vue";
 
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -14,22 +15,20 @@ const vuetify = createVuetify({
     directives,
 })
 
-router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        // User is considered authenticated
-        if (to.name === 'Login') {
-            next({ name: 'UserProfile' }); // Redirect to profile if trying to access login page
-        } else {
-            next(); // Proceed to the route
-        }
-    } else {
-        if (to.matched.some(record => record.meta.requiresAuth)) {
-            next({ name: 'Login' }); // Redirect to login if the route requires auth
-        } else {
-            next(); // Proceed to the route
-        }
-    }
+const app = createApp(App);
+
+// Check if the user is authenticated in local storage
+const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+// Create a reactive authState object with the initial value from local storage
+const authState = reactive({
+    isLoggedIn: isLoggedIn
 });
 
-createApp(App).use(vuetify).use(router).mount('#app')
+// Provide the authState to the app
+app.provide('authState', authState);
+
+app.use(vuetify);
+app.use(router);
+
+app.mount('#app')

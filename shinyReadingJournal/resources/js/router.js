@@ -1,13 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import UserProfile from './components/UserProfile.vue';
+import Home from "./components/Home.vue";
 
 const routes = [
+    { path: '/', component: Home, name: 'Home'},
     { path: '/profile', component: UserProfile, meta: { requiresAuth: true }, name: 'UserProfile' },
 
-    // ... other routes ...
 ];
 
 const router = createRouter({
+
+    mode: 'history',
     history: createWebHistory(),
     routes,
 });
@@ -15,14 +18,12 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const isAuthenticated = !!localStorage.getItem('token');
 
-    // Assuming UserProfile is the protected route
-    if (to.name === 'UserProfile' && !isAuthenticated) {
-        // If the user is not authenticated and trying to access the UserProfile, redirect to the main page
-        next({path: '/'});
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        next('/'); // Redirect to home if not authenticated
     } else {
-        // Proceed to the route
-        next();
+        next(); // Proceed to the intended route
     }
 });
+
 
 export default router;
