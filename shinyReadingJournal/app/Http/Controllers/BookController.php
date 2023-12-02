@@ -71,24 +71,27 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+       // dd($request->all());
+
+        $validatedData = $request->validate([
             'title' => 'required|string',
             'author' => 'required|string',
             'series' => 'string|nullable',
-            'cover' => 'required|string', // Assuming cover is a file path or URL
+//            'cover' => 'string|nullable',
         ]);
 
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
             $coverPath = $cover->store('covers', 'public');  // Store the uploaded file
 
-            $data['cover'] = $coverPath;
+            $validatedData['cover'] = $coverPath;
         }
 
-        $book = Book::create($data);
+        $book = Book::create($validatedData);
 
         return response()->json(['data' => $book, 'message' => 'Book created successfully']);
     }
+
 
     public function updateBook(Request $request, $id)
     {

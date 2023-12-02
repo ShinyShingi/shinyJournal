@@ -31,7 +31,6 @@ const removeBook = (id) => {
     }
 };
 const editBook = async (id) => {
-    git
     // Logic to edit the book
     fetch(`/getBook/${id}`)
         .then(response => response.json())
@@ -99,33 +98,45 @@ onMounted(async () => {
 
 
 <template>
-    <edit-book-modal ref="editBookModal"/>
-    <div class="container">
-        <h1 class="mb-5 mt-3">My Books</h1>
-        <div>
-            <h3 class="mb-3">Books to read:</h3>
-            <ul class="row ps-0" id="incomplete-books">
-                <li v-for="book in incompleteBooks" :key="book.id" class="mt-3 mb-1 col-12 col-md-3 book">
-                    <book-component :book="book" @editBook="editBook" @removeBook="removeBook" @updateStatus="updateStatus" />
-                </li>
-            </ul>
-        </div>
-        <div class="">
-            <h3 class="mb-3">Books in progress:</h3>
-            <ul class="row" id="in-progress-books">
-                <li v-for="book in inProgressBooks" :key="book.id" class="mt-3 mb-1 col-12 col-md-3 book">
-                    <book-component :book="book" @editBook="editBook" @removeBook="removeBook" @updateStatus="updateStatus" />
-                </li>
-            </ul>
-        </div>
-        <div class="">
-            <h3 class="mb-3 mt-5">Completed Books:</h3>
-            <ul class="mb-5 row" id="completed-books">
-                <li v-for="book in completedBooks" :key="book.id" class="mt-3 mb-1 col-12 col-md-3 book">
-                    <book-component :book="book" @editBook="editBook" @removeBook="removeBook" @updateStatus="updateStatus" />
-                </li>
-            </ul>
-        </div>
-    </div>
+    <edit-book-modal ref="editBookModal" />
+    <v-container>
+        <h1 class="">My Books</h1>
+        <h3 class="ma-2">Books to read:</h3>
 
+        <v-row class="">
+            <book-component
+                v-for="book in incompleteBooks"
+                :key="book.id"
+                :book="book"
+                @edit-book="editBook"
+                @remove-book="removeBook"
+                @update-status="updateStatus"
+            />
+        </v-row>
+
+        <h3  class="ma-2">Books in progress:</h3>
+        <v-row class="">
+            <book-component
+                v-for="book in inProgressBooks"
+                :key="book.id"
+                :book="book"
+                @edit-book="editBook"
+                @remove-book="removeBook"
+                @update-status="updateStatus"
+            />
+        </v-row>
+
+        <h3  class="ma-2">Completed Books:</h3>
+        <v-row>
+            <book-component
+                v-for="book in completedBooks"
+                :key="book.id"
+                :book="book"
+                @edit-book="editBook"
+                @remove-book="removeBook"
+                @update-status="updateStatus"
+            />
+        </v-row>
+    </v-container>
 </template>
+

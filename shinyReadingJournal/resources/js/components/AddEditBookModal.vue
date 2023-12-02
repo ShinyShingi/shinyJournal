@@ -13,7 +13,8 @@
                     <v-text-field label="Title" v-model="editedBook.title" required></v-text-field>
                     <v-text-field label="Author" v-model="editedBook.author" required></v-text-field>
                     <v-text-field label="Series" v-model="editedBook.series"></v-text-field>
-                    <v-file-input label="Cover Image" v-model="editedBook.cover" @change="handleFileChange" accept="image/*"></v-file-input>
+                    <v-file-input label="Cover Image" v-model="selectedCoverFile" @change="handleFileChange" accept="image/*"></v-file-input>
+                    <input type="text" v-if="selectedCoverFile" :value="selectedCoverFile.name" readonly>
                     <v-btn type="submit" color="primary">{{ isEditMode ? 'Update' : 'Add' }}</v-btn>
                 </v-form>
             </v-card-text>
@@ -32,6 +33,7 @@ export default {
                 series: '',
                 cover: null,
             },
+            selectedCoverFile: null, // Store the selected file
             isEditMode: false,
             bookId: null,
             dialog: false, // Define 'dialog' here
@@ -46,16 +48,26 @@ export default {
         },
         async saveBook() {
             try {
+                const formData = new FormData();
+                formData.append('title', this.editedBook.title);
+                formData.append('author', this.editedBook.author);
+                formData.append('series', this.editedBook.series);
+
+                // Check if 'cover' is not null and add it to formData if it exists
+                if (this.editedBook.cover) {
+                    formData.append('cover', this.editedBook.cover);
+                }
+
                 let response;
                 if (this.isEditMode) {
-                    response = await axios.put(`/api/books/${this.bookId}`, this.editedBook);
+                    response = await axios.put(`/api/books/${this.bookId}`, formData);
                 } else {
-                    response = await axios.post('/api/books', this.editedBook);
+                    response = await axios.post('/api/books', formData);
                 }
 
                 // Handle success
                 console.log('Book saved:', response.data);
-                this.dialog = false; // Close the modal by setting 'dialog' to false
+                // Close the modal here
             } catch (error) {
                 // Handle error
                 console.error('Error saving book:', error);

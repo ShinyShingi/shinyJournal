@@ -21,25 +21,39 @@ const updateStatus = (newStatus) => {
 </script>
 
 <template>
-    <div class="book">
-        <div class="image-container">
-            <img :src="$getImageUrl(book.cover)" class="img-cover" alt="Cover Image">
-        </div>
-        <h4 class="mt-4">{{ props.book.title }}</h4>
-        <h5>{{ props.book.author }}</h5>
-        <p>{{ props.book.series }}</p>
+    <v-col
+        v-for="n in 1"
+        :key="n"
+        cols="12"
+        sm="12"
+        md="6"
+        lg="4"
+        xl="3"
+        xxl="2"
+        align-self="center"
+    >
+        <v-sheet class="ma-2 pa-2">
+            <div class="book">
+                <div class="image-container">
+                    <img :src="$getImageUrl(book.cover)" class="img-cover" alt="Cover Image">
+                </div>
+                <h4 class="mt-5">{{ props.book.title }}</h4>
+                <h5>{{ props.book.author }}</h5>
+                <p>{{ props.book.series }}</p>
 
-        <span>
-            Status:
-            <select class="form-select mb-3 mt-2" v-model="props.book.status" @change="updateStatus($event.target.value)">
-                <option value="unread">Unread</option>
-                <option value="reading">Reading</option>
-                <option value="read">Read</option>
-            </select>
-        </span>
-        <button @click="removeBook" class="btn btn-danger me-2 delete-book-btn">Remove</button>
-        <button @click="editBook" class="btn btn-secondary edit-book-btn">
-            <i class="fa fa-pencil"></i>
-        </button>
-    </div>
+                <span>
+                    Status:
+                    <v-select class="form-select mb-3 mt-2" v-model="props.book.status" @change="updateStatus($event.target.value)"
+                    :items="[
+                        'Unread', 'Reading', 'Read'
+                    ]"></v-select>
+                </span>
+                <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
+                <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">
+                    <i class="fa fa-pencil"></i>
+                </v-btn>
+            </div>
+        </v-sheet>
+    </v-col>
+
 </template>

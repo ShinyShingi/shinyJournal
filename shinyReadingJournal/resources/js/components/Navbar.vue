@@ -1,6 +1,10 @@
 <template>
     <v-app-bar app class="navbar" dark>
-        <v-toolbar-title>Shiny's Reading Journal</v-toolbar-title>
+        <v-toolbar-title>
+            <v-btn @click="goHome">
+                Shiny's Reading Journal
+            </v-btn>
+        </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn color="green darken-3" @click="addNewBook">
             Add New Book
@@ -21,6 +25,7 @@
 import { inject } from 'vue';
 import AddEditBookModal from "./AddEditBookModal.vue";
 import { ref } from 'vue';
+import router from "../router.js";
 
 export default {
     name: 'Navbar',
@@ -59,6 +64,9 @@ export default {
         register() {
             this.$emit('register-click');
         },
+        goHome() {
+            this.$router.push({path: '/'});
+        }
 
     }
 };

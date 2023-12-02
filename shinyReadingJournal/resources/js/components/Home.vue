@@ -4,6 +4,5 @@
 </template>
 <style>
 p {
-    margin-top: 10rem;
 }
 </style>
