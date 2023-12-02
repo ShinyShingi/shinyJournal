@@ -19,6 +19,8 @@
 
 <script>
 import { inject } from 'vue';
+import AddEditBookModal from "./AddEditBookModal.vue";
+import { ref } from 'vue';
 
 export default {
     name: 'Navbar',
@@ -43,6 +45,7 @@ export default {
         addNewBook() {
             // Handle the Add New Book button click event
             console.log("Add New Book clicked");
+            this.$emit('add-book-click');
         },
         logIn() {
             // Emit an event that App.vue can listen for to open the login modal

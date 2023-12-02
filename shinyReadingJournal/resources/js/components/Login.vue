@@ -19,7 +19,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="submitForm">Login</v-btn>
-                <v-btn color="red" text @click="signInWithGoogle">Sign in with Google</v-btn>
+<!--                <v-btn color="red" text @click="signInWithGoogle">Sign in with Google</v-btn>-->
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -90,9 +90,16 @@ export default {
         // },
         //
         // signInWithGoogle() {
+        //     console.log('Starting Google Sign-In...');
+        //
         //     const auth2 = gapi.auth2.getAuthInstance();
         //     auth2.signIn().then(googleUser => {
-        //         this.$router.push('/profile');
+        //         const clientId = '800650533712-on2c09fdi5k91vgj5lglkofnsrqek6eb.apps.googleusercontent.com'; // Replace with your actual client ID
+        //         const redirectUri = 'http://localhost:5577/callback'; // Replace with your redirect URI
+        //
+        //         const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=id_token&scope=openid profile`;
+        //
+        //         window.location.href = authUrl;
         //     });
         // }
 

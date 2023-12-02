@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 import laravel, { refreshPaths } from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
-
+import { createServer as createViteServer } from 'vite';
+import https from 'https';
+import fs from 'fs';
 
 export default defineConfig({
     plugins: [
@@ -52,8 +54,14 @@ export default defineConfig({
 
     server: {
         host: '0.0.0.0',
-        port: process.env.DEV_PORT  || 4469,
-        hmr: { host: "localhost", clientPort: process.env.DEV_PORT  || 4469},
+        port: process.env.DEV_PORT || 4469,
+        hmr: { host: "localhost", clientPort: process.env.DEV_PORT || 4469 },
         strictPort: true,
+        // https: {
+        //     https: {
+        //         key: fs.readFileSync('ssl/localhost-key.pem'),
+        //         cert: fs.readFileSync('ssl/localhost-cert.pem'),
+        //     },
+        // },
     },
 });

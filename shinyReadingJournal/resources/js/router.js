@@ -1,10 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import UserProfile from './components/UserProfile.vue';
 import Home from "./components/Home.vue";
+import CallbackComponent from "./components/CallbackComponent.vue";
 
 const routes = [
     { path: '/', component: Home, name: 'Home'},
     { path: '/profile', component: UserProfile, meta: { requiresAuth: true }, name: 'UserProfile' },
+    { path: '/callback', name: 'Callback', component: CallbackComponent,
+    },
 
 ];
 
