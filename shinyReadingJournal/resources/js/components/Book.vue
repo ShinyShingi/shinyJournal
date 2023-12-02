@@ -16,10 +16,14 @@ const editBook = () => {
 };
 
 const updateStatus = (newStatus) => {
-    emit('updateStatus', { ...props.book, status: newStatus });
-};
-</script>
+    console.log("Initial book cover:", props.book.cover);
 
+    emit('updateStatus', { id: props.book.id, status: newStatus });
+};
+
+
+
+</script>
 <template>
     <v-col
         v-for="n in 1"
@@ -35,7 +39,7 @@ const updateStatus = (newStatus) => {
         <v-sheet class="ma-2 pa-2">
             <div class="book">
                 <div class="image-container">
-                    <img :src="$getImageUrl(book.cover)" class="img-cover" alt="Cover Image">
+                    <img :src="$getImageUrl(props.book.cover)" class="img-cover" :key="props.book.cover" alt="Cover Image">
                 </div>
                 <h4 class="mt-5">{{ props.book.title }}</h4>
                 <h5>{{ props.book.author }}</h5>
@@ -43,10 +47,12 @@ const updateStatus = (newStatus) => {
 
                 <span>
                     Status:
-                    <v-select class="form-select mb-3 mt-2" v-model="props.book.status" @change="updateStatus($event.target.value)"
-                    :items="[
-                        'Unread', 'Reading', 'Read'
-                    ]"></v-select>
+                     <v-select
+                         class="form-select mb-3 mt-2"
+                         v-model="props.book.status"
+                         :items="['Unread', 'Reading', 'Read']"
+                         @update:modelValue="updateStatus"
+                     ></v-select>
                 </span>
                 <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
                 <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">

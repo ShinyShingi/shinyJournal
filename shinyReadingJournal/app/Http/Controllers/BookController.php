@@ -128,6 +128,8 @@ class BookController extends Controller
         if ($existingBook) {
             $newStatus = $request->input('status');
 
+//            dd($newStatus); // Check if you're receiving the correct status
+
             // Update the book's status in the database
             $existingBook->status = $newStatus;
 
@@ -155,6 +157,5 @@ class BookController extends Controller
             Log::error('An error occurred while deleting the book: ' . $e->getMessage());
             return response()->json(['error' => 'Some error occurred'], 500);
         }
-
     }
 }
