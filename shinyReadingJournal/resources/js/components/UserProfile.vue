@@ -49,7 +49,7 @@ const editBook = async (id) => {
 
 const updateStatus = (book) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    console.log(book.data)
+    console.log( "Here is the book data", book)
     fetch(`/updateStatus/${book.id}`, {
         method: 'POST',
         headers: {
@@ -68,7 +68,8 @@ const updateStatus = (book) => {
             console.log('Success:', data);
 
             // Create a new updated book object (assuming 'data' contains the updated book)
-            const updatedBook = { ...book, ...data };
+            const updatedBook = { ...book, ...data.book };
+            console.log('Updated book:', updatedBook);
 
             // Remove the book from all lists
             removeBookFromAllLists(book.id);

@@ -136,7 +136,7 @@ class BookController extends Controller
 
             $existingBook->save();
 
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, "book"=>$existingBook]);
         }
 
         return response()->json(['success' => false, 'message' => 'No book found']);
