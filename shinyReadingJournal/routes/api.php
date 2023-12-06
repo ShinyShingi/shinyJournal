@@ -24,8 +24,3 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('books', [BookApiController::class, 'index']);
 Route::post('books', [BookController::class, 'store']);
 Route::put('books/{id}', [BookController::class, 'updateBook']);
-
-// Additional routes for other actions if needed
-// Route::get('books/{id}', [BookController::class, 'show']);
-// Route::get('books/{id}/edit', [BookController::class, 'edit']);
-// Route::delete('books/{id}', [BookController::class, 'destroy']);

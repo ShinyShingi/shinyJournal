@@ -36,6 +36,7 @@ const removeBook = (id) => {
 };
 
 const editBook = async (id) => {
+    console.log("I'm in editBook")
     // Logic to edit the book
     fetch(`/getBook/${id}`)
         .then(response => response.json())

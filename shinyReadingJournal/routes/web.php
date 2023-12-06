@@ -20,9 +20,6 @@ use App\Http\Controllers\BookController;
 Route::get('/', function () {
     return view('home');
 });
-Route::get('/{any}', function () {
-    return view('home'); // Replace 'your_main_view' with the name of your main blade file
-})->where('any', '.*');
 
 Route::middleware([
     'auth:sanctum',
@@ -43,10 +40,13 @@ Route::get("profile/books", [BookController::class, 'index']);
 
 
 Route::get('create', [BookController::class, 'create']);
-Route::get('edit', [BookController::class, 'edit']);
 Route::post('store-data', [BookController::class,'store']);
 Route::post('/updateStatus/{id}', [BookController::class, 'updateStatus']);
 Route::delete('/updateBook/{id}', [BookController::class,'destroy']);
 
 Route::get('/getBook/{id}', [BookController::class,'getBook']);
 Route::post('/updateBook/{id}', [BookController::class,'updateBook']);
+
+Route::get('/{any}', function () {
+    return view('home'); // Replace 'your_main_view' with the name of your main blade file
+})->where('any', '.*');

@@ -12,6 +12,7 @@ const removeBook = () => {
 };
 
 const editBook = () => {
+    console.log("editBook clicked")
     emit('editBook', props.book.id);
 };
 
