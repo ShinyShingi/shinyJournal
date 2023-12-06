@@ -9,6 +9,8 @@ const editBookModal = ref(null);
 const completedBooks = ref([]);
 const incompleteBooks = ref([]);
 const inProgressBooks = ref([]);
+
+
 const removeBook = (id) => {
     if (confirm('Are you sure you want to delete this book?')) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -42,11 +44,12 @@ const editBook = async (id) => {
         .then(response => response.json())
         .then(async data => {
             if (editBookModal.value) {
-                editBookModal.value.openModal(data);
+                editBookModal.value.openModal(data, 'edit');  // Pass 'edit' as mode
             }
         })
         .catch((error) => console.error('Error:', error));
 };
+
 
 const updateStatus = (book) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -97,6 +100,28 @@ const addBookToCorrectList = (updatedBook) => {
     }
 };
 
+const handleBookSaved = (updatedBook) => {
+    const updateList = (list) => {
+        const index = list.value.findIndex(book => book.id === updatedBook.id);
+        if (index !== -1) {
+            list.value.splice(index, 1, updatedBook);
+        } else {
+            list.value.push(updatedBook);
+        }
+    };
+
+    switch (updatedBook.status) {
+        case 'Unread':
+            updateList(incompleteBooks);
+            break;
+        case 'Reading':
+            updateList(inProgressBooks);
+            break;
+        case 'Read':
+            updateList(completedBooks);
+            break;
+    }
+};
 
 onMounted(async () => {
     const response = await fetch(`/api/books`);
@@ -115,7 +140,7 @@ onMounted(async () => {
 
 
 <template>
-    <edit-book-modal ref="editBookModal" />
+    <edit-book-modal ref="editBookModal" v-model:dialog="dialog" @book-saved="handleBookSaved"/>
     <v-container>
         <h1 class="">My Books</h1>
         <h3 class="ma-2">Books to read:</h3>

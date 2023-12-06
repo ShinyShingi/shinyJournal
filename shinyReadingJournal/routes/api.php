@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('books', [BookApiController::class, 'index']);
 Route::post('books', [BookController::class, 'store']);
 Route::put('books/{id}', [BookController::class, 'updateBook']);
+Route::post('books/{id}', [BookController::class, 'updateBook']);

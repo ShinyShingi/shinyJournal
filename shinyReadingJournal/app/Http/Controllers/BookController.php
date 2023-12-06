@@ -114,11 +114,18 @@ class BookController extends Controller
 
             $data['cover'] = $coverPath;
         }
+        Log::info('Received update data:', $request->all());
 
         $book->update($data);
+        Log::info('Book data after update:', $book->toArray());
 
-        return response()->json(['data' => $book, 'message' => 'Book updated successfully']);
+        $updatedBook = $book->fresh(); // Reload the updated book from the database
+        Log::info('Refreshed book data:', $book->toArray());
+
+
+        return response()->json(['data' => $updatedBook, 'message' => 'Book updated successfully']);
     }
+
 
 
     public function updateStatus(Request $request, string $id)

@@ -41,12 +41,16 @@ export default {
     },
     methods: {
         openModal(book, mode) {
+            console.log("openModal called with mode:", mode);
             this.editedBook = { ...book };
             this.isEditMode = mode === 'edit';
-            this.bookId = book.id;
-            this.dialog = true; // Open the modal by setting 'dialog' to true
+            if (this.isEditMode) {
+                this.bookId = book.id;
+            }
+            this.dialog = true;
         },
         async saveBook() {
+            console.log("Saving book with data:", this.editedBook);
             try {
                 const formData = new FormData();
                 formData.append('title', this.editedBook.title);
@@ -58,16 +62,41 @@ export default {
                     formData.append('cover', this.editedBook.cover);
                 }
 
+                console.log('FormData before sending:', Array.from(formData.entries()));
+
                 let response;
                 if (this.isEditMode) {
-                    response = await axios.put(`/api/books/${this.bookId}`, formData);
+                    // Using fetch with POST method and _method field for PUT spoofing
+                    response = await fetch(`/api/books/${this.bookId}`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
                 } else {
-                    response = await axios.post('/api/books', formData);
+                    // Using fetch for a standard POST request
+                    response = await fetch('/api/books', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    });
                 }
 
+                const responseData = await response.json();
+                console.log('Response after sending:', responseData);
+
                 // Handle success
-                console.log('Book saved:', response.data);
-                // Close the modal here
+                if (response.ok) {
+                    console.log('Book saved:', responseData);
+                    this.$emit('book-saved', responseData);
+                    this.closeModal();
+
+                } else {
+                    console.error('Failed to save the book:', responseData);
+                }
             } catch (error) {
                 // Handle error
                 console.error('Error saving book:', error);
@@ -77,6 +106,7 @@ export default {
             this.editedBook.cover = event.target.files[0];
         },
         closeModal() {
+            this.isEditMode = false;
             this.dialog = false; // Close the modal by setting 'dialog' to false
         },
     },
