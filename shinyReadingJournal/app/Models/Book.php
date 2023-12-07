@@ -18,8 +18,8 @@ class Book extends Model
         'status',
     ];
 
-    public function user()
+    public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'book_user');
     }
 }

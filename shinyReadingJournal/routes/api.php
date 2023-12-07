@@ -17,9 +17,15 @@ use App\Http\Controllers\BookController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/profile', [BookController::class, 'store']);
+    // Other protected routes...
+});
+
 
 Route::get('books', [BookApiController::class, 'index']);
 Route::post('books', [BookController::class, 'store']);

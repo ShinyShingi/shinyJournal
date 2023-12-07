@@ -72,14 +72,14 @@ const updateStatus = (book) => {
             console.log('Success:', data);
 
             // Create a new updated book object (assuming 'data' contains the updated book)
-            const updatedBook = { ...book, ...data.book };
-            console.log('Updated book:', updatedBook);
+            const bookData = { ...book, ...data.book };
+            console.log('Updated book:', bookData);
 
             // Remove the book from all lists
             removeBookFromAllLists(book.id);
 
             // Add the updated book to the correct list based on its new status
-            addBookToCorrectList(updatedBook);
+            addBookToCorrectList(bookData);
         })
         .catch((error) => console.error('Error:', error));
 };
@@ -90,13 +90,13 @@ const removeBookFromAllLists = (bookId) => {
     inProgressBooks.value = inProgressBooks.value.filter(b => b.id !== bookId);
 };
 
-const addBookToCorrectList = (updatedBook) => {
-    if (updatedBook.status === 'Unread') {
-        incompleteBooks.value.push(updatedBook);
-    } else if (updatedBook.status === 'Reading') {
-        inProgressBooks.value.push(updatedBook);
-    } else if (updatedBook.status === 'Read') {
-        completedBooks.value.push(updatedBook);
+const addBookToCorrectList = (bookData) => {
+    if (bookData.status === 'Unread') {
+        incompleteBooks.value.push(bookData);
+    } else if (bookData.status === 'Reading') {
+        inProgressBooks.value.push(bookData);
+    } else if (bookData.status === 'Read') {
+        completedBooks.value.push(bookData);
     }
 };
 const fetchBooks = async () => {
@@ -115,27 +115,42 @@ const fetchBooks = async () => {
     }
 };
 
-const handleBookSaved = async (updatedBook) => {
-    const updateList = (list) => {
-        const index = list.value.findIndex(book => book.id === updatedBook.id);
-        if (index !== -1) {
-            list.value.splice(index, 1, updatedBook);
-        } else {
-            list.value.push(updatedBook);
+const handleBookSaved = async (bookData) => {  // Renamed updatedBook to bookData for clarity
+    if (bookData.isNew) {
+        // If the book is new, add it to the appropriate list based on its status
+        switch (bookData.book.status) {
+            case 'Unread':
+                incompleteBooks.value.push(bookData.book);
+                break;
+            case 'Reading':
+                inProgressBooks.value.push(bookData.book);
+                break;
+            case 'Read':
+                completedBooks.value.push(bookData.book);
+                break;
         }
-    };
+    } else {
+        // If the book is being updated, find and replace it in the appropriate list
+        const updateList = (list) => {
+            const index = list.value.findIndex(book => book.id === bookData.book.id);
+            if (index !== -1) {
+                list.value.splice(index, 1, bookData.book);
+            }
+        };
 
-    switch (updatedBook.status) {
-        case 'Unread':
-            updateList(incompleteBooks);
-            break;
-        case 'Reading':
-            updateList(inProgressBooks);
-            break;
-        case 'Read':
-            updateList(completedBooks);
-            break;
+        switch (bookData.book.status) {
+            case 'Unread':
+                updateList(incompleteBooks);
+                break;
+            case 'Reading':
+                updateList(inProgressBooks);
+                break;
+            case 'Read':
+                updateList(completedBooks);
+                break;
+        }
     }
+
     await fetchBooks();
 };
 
@@ -151,6 +166,8 @@ onMounted(async () => {
         // Handle error
         console.error('Failed to fetch books');
     }
+    await fetchBooks();
+
 });
 </script>
 

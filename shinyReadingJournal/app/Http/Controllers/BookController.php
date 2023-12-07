@@ -89,7 +89,15 @@ class BookController extends Controller
 
         $book = Book::create($validatedData);
 
-        return response()->json(['data' => $book, 'message' => 'Book created successfully']);
+        $userId = auth()->id();
+        $book->users()->attach($userId);
+
+        Log::info('Book created:', ['book' => $book->toArray()]);
+        Log::info('Attaching book to user ID:', ['userId' => $userId]);
+
+        return response()->json(['book' => $book, 'isNew' => true, 'message' => 'Book created successfully']);
+
+
     }
 
 
@@ -119,11 +127,11 @@ class BookController extends Controller
         $book->update($data);
         Log::info('Book data after update:', $book->toArray());
 
-        $updatedBook = $book->fresh(); // Reload the updated book from the database
+        $bookData = $book->fresh(); // Reload the updated book from the database
         Log::info('Refreshed book data:', $book->toArray());
 
 
-        return response()->json(['data' => $updatedBook, 'message' => 'Book updated successfully']);
+        return response()->json(['data' => $bookData, 'message' => 'Book updated successfully']);
     }
 
 
