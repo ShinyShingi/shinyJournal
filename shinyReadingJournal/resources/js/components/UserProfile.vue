@@ -99,8 +99,23 @@ const addBookToCorrectList = (updatedBook) => {
         completedBooks.value.push(updatedBook);
     }
 };
+const fetchBooks = async () => {
+    try {
+        const response = await fetch(`/api/books`);
+        if (response.ok) {
+            const data = await response.json();
+            completedBooks.value = data.completedBooks;
+            incompleteBooks.value = data.incompleteBooks;
+            inProgressBooks.value = data.inProgressBooks;
+        } else {
+            console.error('Failed to fetch books');
+        }
+    } catch (error) {
+        console.error('Error fetching books:', error);
+    }
+};
 
-const handleBookSaved = (updatedBook) => {
+const handleBookSaved = async (updatedBook) => {
     const updateList = (list) => {
         const index = list.value.findIndex(book => book.id === updatedBook.id);
         if (index !== -1) {
@@ -121,6 +136,7 @@ const handleBookSaved = (updatedBook) => {
             updateList(completedBooks);
             break;
     }
+    await fetchBooks();
 };
 
 onMounted(async () => {
