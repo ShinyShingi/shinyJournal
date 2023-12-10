@@ -42,6 +42,8 @@ export default {
     methods: {
         openModal(book, mode) {
             console.log("openModal called with mode:", mode);
+            console.log("Book data received in openModal:", book);
+
             this.editedBook = { ...book };
             this.isEditMode = mode === 'edit';
             if (this.isEditMode) {
@@ -90,8 +92,9 @@ export default {
 
                 // Handle success
                 if (response.ok) {
-                    console.log('Book saved:', responseData);
-                    this.$emit('book-saved', responseData);
+                    console.log('Emitting book-saved with:', { book: responseData, isNew: !this.isEditMode });
+                    this.$emit('book-saved', { book: responseData, isNew: !this.isEditMode });
+
                     this.closeModal();
 
                 } else {

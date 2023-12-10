@@ -31,9 +31,9 @@ const updateStatus = (newStatus) => {
         :key="n"
         cols="12"
         sm="12"
-        md="6"
-        lg="4"
-        xl="3"
+        md="4"
+        lg="3"
+        xl="2"
         xxl="2"
         align-self="center"
     >

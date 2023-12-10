@@ -23,7 +23,7 @@ const removeBook = (id) => {
             })
             .then((response) => {
                 if (response.data.success) {
-                    // Book successfully deleted, update your book lists
+                    // Book successfully deleted, update book lists
                     incompleteBooks.value = incompleteBooks.value.filter(book => book.id !== id);
                     completedBooks.value = completedBooks.value.filter(book => book.id !== id);
                     inProgressBooks.value = inProgressBooks.value.filter(book => book.id !== id);
@@ -116,33 +116,35 @@ const fetchBooks = async () => {
 };
 
 const handleBookSaved = async (response) => {
-    const bookData = response.data; // Extracting book data from the response
+    // Destructuring to extract 'book' and 'isNew' from the response
+    console.log('Received in handleBookSaved:', response);
+    const { book, isNew } = response;
 
-    // Assuming `isNew` property is part of the response to distinguish between add and edit
-    // If not present, you might need to add this property in your backend response
-    if (response.isNew) {
-        // If the book is new, add it to the appropriate list based on its status
-        switch (bookData.status) {
+    if (isNew) {
+        // Handle the addition of a new book
+        switch (book.status) {
             case 'Unread':
-                incompleteBooks.value.push(bookData);
+                incompleteBooks.value.push(book);
                 break;
             case 'Reading':
-                inProgressBooks.value.push(bookData);
+                inProgressBooks.value.push(book);
                 break;
             case 'Read':
-                completedBooks.value.push(bookData);
+                completedBooks.value.push(book);
                 break;
+            default:
+                console.error('Unknown book status:', book.status);
         }
     } else {
-        // If the book is being updated, find and replace it in the appropriate list
+        // Handle updating an existing book
         const updateList = (list) => {
-            const index = list.value.findIndex(book => book.id === bookData.id);
+            const index = list.value.findIndex(b => b.id === book.id);
             if (index !== -1) {
-                list.value.splice(index, 1, bookData);
+                list.value.splice(index, 1, book);
             }
         };
 
-        switch (bookData.status) {
+        switch (book.status) {
             case 'Unread':
                 updateList(incompleteBooks);
                 break;
@@ -155,6 +157,7 @@ const handleBookSaved = async (response) => {
         }
     }
 
+    // Optional: Refresh the books list from the server
     await fetchBooks();
 };
 
