@@ -49,14 +49,44 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $credentials['email'])->first();
+        // $user = User::where('email', $credentials['email'])->first();
 
-        if ($user && Hash::check($credentials['password'], $user->password)) {
+        // if ($user && Hash::check($credentials['password'], $user->password)) {
+        //     $token = $user->createToken('Token Name')->plainTextToken;
+        //     return response()->json(['token' => $token], 200);
+        // }
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = Auth::user();
             $token = $user->createToken('Token Name')->plainTextToken;
-            return response()->json(['token' => $token], 200);
+            return response()->json([
+                'token' => $token,
+                'user' => $user
+            ], 200);
         }
 
         return response()->json(['error' => 'Invalid credentials'], 401);
+
+    }
+
+    public function logout(Request $request)
+    {
+
+        Auth::logout();
+        $request->session()->invalidate();     
+        $request->session()->regenerateToken();
+        // if (Auth::check()) {
+        //     $request->session()->regenerate();
+        //     $user = Auth::user();
+        //     $token = $user->createToken('Token Name')->plainTextToken;
+        //     return response()->json([
+        //         'token' => $token,
+        //         'user' => $user
+        //     ], 200);
+        // }
+
+        return response()->json(['success' => 'Logged Out']);
 
     }
 

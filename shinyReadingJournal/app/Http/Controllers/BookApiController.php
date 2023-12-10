@@ -12,6 +12,9 @@ class BookApiController extends Controller
 {
     public function index()
     {
+        // dd(auth()->check());
+
+
         $books = Book::all();
         $completedBooks = Book::where('status', 'read')->get();
         $incompleteBooks = Book::where('status', 'unread')->get();

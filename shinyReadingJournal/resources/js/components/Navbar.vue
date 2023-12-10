@@ -26,6 +26,7 @@ import { inject } from 'vue';
 import AddEditBookModal from "./AddEditBookModal.vue";
 import { ref } from 'vue';
 import router from "../router.js";
+import axios from "axios";
 
 export default {
     name: 'Navbar',
@@ -56,10 +57,23 @@ export default {
             // Emit an event that App.vue can listen for to open the login modal
             this.$emit('login-click');
         },
-        logout() {
-            localStorage.removeItem('token');
-            this.$emit('logout-successful'); // Emit an event on successful logout
-            this.$router.push({path: '/'});
+        async logout() {
+
+            try {
+                const response = await axios.post('/logout', {});
+                localStorage.removeItem('token');
+                this.$emit('logout-successful'); // Emit the event here
+                this.$router.push({path: '/'});
+            } catch (error) {
+                console.error(error);
+            }
+
+            // this.$emit('logout-click');
+            // 
+            // this.$emit('logout-successful'); // Emit an event on successful logout
+            // this.$router.push({path: '/'});
+
+
         },
         register() {
             this.$emit('register-click');
