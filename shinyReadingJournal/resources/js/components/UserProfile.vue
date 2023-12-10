@@ -3,14 +3,14 @@ import {ref, nextTick, onMounted, defineProps} from 'vue';
 import EditBookModal from "./AddEditBookModal.vue";
 import BookComponent from "./Book.vue";
 import axios from 'axios';
+
 const editBookModal = ref(null);
-
-
 const completedBooks = ref([]);
 const incompleteBooks = ref([]);
 const inProgressBooks = ref([]);
 
 
+const dialog = ref(false);
 const removeBook = (id) => {
     if (confirm('Are you sure you want to delete this book?')) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -116,8 +116,8 @@ const fetchBooks = async () => {
 };
 
 const handleBookSaved = async (response) => {
-    // Destructuring to extract 'book' and 'isNew' from the response
-    console.log('Received in handleBookSaved:', response);
+    console.log('handleBookSaved triggered with:', response);
+
     const { book, isNew } = response;
 
     if (isNew) {

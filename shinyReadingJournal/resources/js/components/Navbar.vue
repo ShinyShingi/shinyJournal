@@ -50,7 +50,6 @@ export default {
     methods: {
         addNewBook() {
             // Handle the Add New Book button click event
-            console.log("Add New Book clicked");
             this.$emit('add-book-click');
         },
         logIn() {
@@ -69,7 +68,7 @@ export default {
             }
 
             // this.$emit('logout-click');
-            // 
+            //
             // this.$emit('logout-successful'); // Emit an event on successful logout
             // this.$router.push({path: '/'});
 
