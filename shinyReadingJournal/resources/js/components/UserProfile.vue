@@ -115,30 +115,34 @@ const fetchBooks = async () => {
     }
 };
 
-const handleBookSaved = async (bookData) => {  // Renamed updatedBook to bookData for clarity
-    if (bookData.isNew) {
+const handleBookSaved = async (response) => {
+    const bookData = response.data; // Extracting book data from the response
+
+    // Assuming `isNew` property is part of the response to distinguish between add and edit
+    // If not present, you might need to add this property in your backend response
+    if (response.isNew) {
         // If the book is new, add it to the appropriate list based on its status
-        switch (bookData.book.status) {
+        switch (bookData.status) {
             case 'Unread':
-                incompleteBooks.value.push(bookData.book);
+                incompleteBooks.value.push(bookData);
                 break;
             case 'Reading':
-                inProgressBooks.value.push(bookData.book);
+                inProgressBooks.value.push(bookData);
                 break;
             case 'Read':
-                completedBooks.value.push(bookData.book);
+                completedBooks.value.push(bookData);
                 break;
         }
     } else {
         // If the book is being updated, find and replace it in the appropriate list
         const updateList = (list) => {
-            const index = list.value.findIndex(book => book.id === bookData.book.id);
+            const index = list.value.findIndex(book => book.id === bookData.id);
             if (index !== -1) {
-                list.value.splice(index, 1, bookData.book);
+                list.value.splice(index, 1, bookData);
             }
         };
 
-        switch (bookData.book.status) {
+        switch (bookData.status) {
             case 'Unread':
                 updateList(incompleteBooks);
                 break;
@@ -153,6 +157,7 @@ const handleBookSaved = async (bookData) => {  // Renamed updatedBook to bookDat
 
     await fetchBooks();
 };
+
 
 onMounted(async () => {
     const response = await fetch(`/api/books`);

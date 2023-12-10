@@ -77,7 +77,7 @@ class BookController extends Controller
             'title' => 'required|string',
             'author' => 'required|string',
             'series' => 'string|nullable',
-//            'cover' => 'string|nullable',
+            'cover' => 'file|nullable',
         ]);
 
         if ($request->hasFile('cover')) {
@@ -113,7 +113,7 @@ class BookController extends Controller
             'title' => 'string',
             'author' => 'string',
             'series' => 'string|nullable',
-            'cover' => 'string|nullable',
+           // 'cover' => 'nullable|file',
         ]);
 
         if ($request->hasFile('cover')) {
