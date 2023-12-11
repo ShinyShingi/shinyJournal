@@ -3,6 +3,10 @@ import {ref, nextTick, onMounted, defineProps} from 'vue';
 import EditBookModal from "./AddEditBookModal.vue";
 import BookComponent from "./Book.vue";
 import axios from 'axios';
+import { useRoute } from 'vue-router';
+const route = useRoute();
+
+const username = ref(route.params.username)
 
 const editBookModal = ref(null);
 const completedBooks = ref([]);
@@ -100,19 +104,24 @@ const addBookToCorrectList = (bookData) => {
     }
 };
 const fetchBooks = async () => {
-    try {
-        const response = await fetch(`/api/books`);
-        if (response.ok) {
-            const data = await response.json();
-            completedBooks.value = data.completedBooks;
-            incompleteBooks.value = data.incompleteBooks;
-            inProgressBooks.value = data.inProgressBooks;
-        } else {
-            console.error('Failed to fetch books');
-        }
-    } catch (error) {
-        console.error('Error fetching books:', error);
+  try {
+    const response = await fetch(`/api/${username.value}/books`);
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+
+      // Assuming 'data' is an array of books
+      // Categorize books based on their status
+      completedBooks.value = data.books.filter(book => book.status === 'Read');
+      incompleteBooks.value = data.books.filter(book => book.status === 'Unread');
+      inProgressBooks.value = data.books.filter(book => book.status === 'Reading');
+    } else {
+      console.error('Failed to fetch books');
     }
+  } catch (error) {
+    console.error('Error fetching books:', error);
+  }
 };
 
 const handleBookSaved = async (response) => {
@@ -163,17 +172,17 @@ const handleBookSaved = async (response) => {
 
 
 onMounted(async () => {
-    const response = await fetch(`/api/books`);
-
-    if (response.ok) {
-        const data = await response.json();
-        completedBooks.value = data.completedBooks;
-        incompleteBooks.value = data.incompleteBooks;
-        inProgressBooks.value = data.inProgressBooks;
-    } else {
-        // Handle error
-        console.error('Failed to fetch books');
-    }
+    // const response = await fetch(`/api/books`);
+    //
+    // if (response.ok) {
+    //     const data = await response.json();
+    //     completedBooks.value = data.completedBooks;
+    //     incompleteBooks.value = data.incompleteBooks;
+    //     inProgressBooks.value = data.inProgressBooks;
+    // } else {
+    //     // Handle error
+    //     console.error('Failed to fetch books');
+    // }
     await fetchBooks();
 
 });
@@ -182,8 +191,10 @@ onMounted(async () => {
 
 <template>
     <edit-book-modal ref="editBookModal" v-model:dialog="dialog" @book-saved="handleBookSaved"/>
-    <v-container>
-        <h1 class="">My Books</h1>
+    <v-container class="profileContainer">
+      <h1> {{ username }}'s Reading List</h1>
+
+      <h1 class="">My Books</h1>
         <h3 class="ma-2">Books to read:</h3>
 
         <v-row class="">
@@ -224,3 +235,8 @@ onMounted(async () => {
     </v-container>
 </template>
 
+<style>
+.profileContainer {
+  margin-top: 64px;
+}
+</style>

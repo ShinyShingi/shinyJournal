@@ -3,30 +3,30 @@ import UserProfile from './components/UserProfile.vue';
 import Home from "./components/Home.vue";
 import CallbackComponent from "./components/CallbackComponent.vue";
 
-const routes = [
-    { path: '/', component: Home, name: 'Home'},
-    { path: '/profile', component: UserProfile, meta: { requiresAuth: true }, name: 'UserProfile' },
-    { path: '/callback', name: 'Callback', component: CallbackComponent,
-    },
+const isAuthenticated = () => !!localStorage.getItem('token');
 
+const routes = [
+    { path: '/', component: Home, name: 'Home' },
+    {
+        path: '/profile/:username',
+        component: UserProfile,
+        name: 'UserProfile',
+        meta: { requiresAuth: true },
+    },
+    { path: '/callback', name: 'Callback', component: CallbackComponent },
 ];
 
 const router = createRouter({
-
-    mode: 'history',
     history: createWebHistory(),
     routes,
 });
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = !!localStorage.getItem('token');
-
-    if (to.meta.requiresAuth && !isAuthenticated) {
+    if (to.meta.requiresAuth && !isAuthenticated()) {
         next('/'); // Redirect to home if not authenticated
     } else {
         next(); // Proceed to the intended route
     }
 });
-
 
 export default router;

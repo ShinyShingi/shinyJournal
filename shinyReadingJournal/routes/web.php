@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\UserController;
 
 
 /*
@@ -37,7 +38,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
-Route::get("profile/books", [BookController::class, 'index']);
+Route::get("profile/books", [BookController::class, 'index'])->middleware('auth');
 
 
 Route::get('create', [BookController::class, 'create']);
@@ -46,8 +47,12 @@ Route::post('/updateStatus/{id}', [BookController::class, 'updateStatus']);
 Route::delete('/updateBook/{id}', [BookController::class,'destroy']);
 
 Route::get('/getBook/{id}', [BookController::class,'getBook']);
-Route::post('/updateBook/{id}', [BookController::class,'updateBook']);
+
+
+
+
 
 Route::get('/{any}', function () {
-    return view('home'); // Replace 'your_main_view' with the name of your main blade file
+    return view('home');
 })->where('any', '.*');
+

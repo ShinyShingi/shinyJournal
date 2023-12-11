@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookApiController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,15 +18,20 @@ use App\Http\Controllers\BookController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
+Route::middleware('auth:sanctum')->get('/profile/{username}', function (Request $request) {
     return $request->user();
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/profile', [BookController::class, 'store']);
+   // Route::post('/profile', [BookController::class, 'store']);
     // Other protected routes...
+
 });
 
+Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'authenticatedUser']);
+
+
+Route::get('{username}/books', [\App\Http\Controllers\UserController::class, 'getUserBooks']);
 
 Route::get('books', [BookApiController::class, 'index']);
 Route::post('books', [BookController::class, 'store']);

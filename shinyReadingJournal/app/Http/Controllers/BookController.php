@@ -77,7 +77,7 @@ class BookController extends Controller
             'title' => 'required|string',
             'author' => 'required|string',
             'series' => 'string|nullable',
-            //'cover' => 'file|nullable',
+            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
         ]);
 
         if ($request->hasFile('cover')) {
@@ -89,8 +89,10 @@ class BookController extends Controller
 
         $book = Book::create($validatedData);
 
-        $userId = auth()->id();
-        $book->users()->attach($userId);
+        $userId = auth()->id(); // Get the ID of the authenticated user
+        if ($userId) {
+            $book->users()->attach($userId);
+        }
 
         Log::info('Book created:', ['book' => $book->toArray()]);
         Log::info('Attaching book to user ID:', ['userId' => $userId]);
@@ -113,7 +115,7 @@ class BookController extends Controller
             'title' => 'string',
             'author' => 'string',
             'series' => 'string|nullable',
-           // 'cover' => 'nullable|file',
+            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
         ]);
 
         if ($request->hasFile('cover')) {
