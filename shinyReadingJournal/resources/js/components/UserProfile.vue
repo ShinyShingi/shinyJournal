@@ -4,6 +4,8 @@ import EditBookModal from "./AddEditBookModal.vue";
 import BookComponent from "./Book.vue";
 import axios from 'axios';
 import { useRoute } from 'vue-router';
+
+
 const route = useRoute();
 
 const username = ref(route.params.username)
@@ -44,6 +46,19 @@ const removeBook = (id) => {
     }
 };
 
+
+const addNewBook = () => {
+  if (editBookModal.value) {
+    editBookModal.value.openModal({
+      title: '',
+      author: '',
+      series: '',
+      cover: null,
+      status: 'Unread'
+    }, 'add');
+  }
+};
+
 const editBook = async (id) => {
     console.log("I'm in editBook")
     // Logic to edit the book
@@ -56,7 +71,6 @@ const editBook = async (id) => {
         })
         .catch((error) => console.error('Error:', error));
 };
-
 
 const updateStatus = (book) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -112,7 +126,7 @@ const fetchBooks = async () => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
+      //console.log(data);
 
       // Assuming 'data' is an array of books
       // Categorize books based on their status
@@ -128,50 +142,60 @@ const fetchBooks = async () => {
 };
 
 const handleBookSaved = async (response) => {
-    console.log('handleBookSaved triggered with:', response);
+  console.log('handleBookSaved triggered with:', response);
 
-    const { book, isNew } = response;
+  let book;
+  const { isNew } = response;
 
-    if (isNew) {
-        // Handle the addition of a new book
-        switch (book.status) {
-            case 'Unread':
-                incompleteBooks.value.push(book);
-                break;
-            case 'Reading':
-                inProgressBooks.value.push(book);
-                break;
-            case 'Read':
-                completedBooks.value.push(book);
-                break;
-            default:
-                console.error('Unknown book status:', book.status);
-        }
-    } else {
-        // Handle updating an existing book
-        const updateList = (list) => {
-            const index = list.value.findIndex(b => b.id === book.id);
-            if (index !== -1) {
-                list.value.splice(index, 1, book);
-            }
-        };
+  if (isNew) {
+    // When adding a new book, the structure might be different
+    // Adjust this line based on the actual structure when adding a new book
+    book = response.book.book;
+    console.log("adding new book", book);
 
-        switch (book.status) {
-            case 'Unread':
-                updateList(incompleteBooks);
-                break;
-            case 'Reading':
-                updateList(inProgressBooks);
-                break;
-            case 'Read':
-                updateList(completedBooks);
-                break;
-        }
+  } else {
+    // When editing a book
+    const { book: nestedBook } = response;
+    book = nestedBook;
+  }
+
+  if (!book) {
+    console.error('Book object is undefined:', response);
+    return; // Exit the function if book is undefined
+  }
+
+  if (isNew) {
+    // Handle the addition of a new book
+        incompleteBooks.value.push(book);
+        console.log('book added successfuly:', book)
+
+  } else {
+    // Handle updating an existing book
+    const updateList = (list) => {
+      const index = list.value.findIndex(b => b.id === book.id);
+      if (index !== -1) {
+        list.value.splice(index, 1, book);
+      }
+    };
+
+    switch (book.status) {
+      case 'Unread':
+        updateList(incompleteBooks);
+        break;
+      case 'Reading':
+        updateList(inProgressBooks);
+        break;
+      case 'Read':
+        updateList(completedBooks);
+        break;
     }
+  }
 
-    // Optional: Refresh the books list from the server
-    await fetchBooks();
+  // Optional: Refresh the books list from the server
+  await fetchBooks();
 };
+
+
 
 
 onMounted(async () => {
@@ -190,7 +214,11 @@ onMounted(async () => {
       <p>Books you want to read: {{ totalWantToRead }}</p>
       <p>Books you are reading: {{ totalCurrentlyReading }}</p>
       <p>Books you've read: {{ totalHaveRead }}</p>
+      <h3>Do you want to <v-btn color="green darken-3" @click="addNewBook">
+        Add New Book
+      </v-btn>
 
+      </h3>
       <h1 class="">My Books</h1>
         <h3 class="ma-2">Books to read:</h3>
 

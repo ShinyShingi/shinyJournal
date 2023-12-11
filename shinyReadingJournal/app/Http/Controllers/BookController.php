@@ -78,6 +78,8 @@ class BookController extends Controller
             'author' => 'required|string',
             'series' => 'string|nullable',
             'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
+            'status' => 'Unread',
+
         ]);
 
         if ($request->hasFile('cover')) {

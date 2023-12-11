@@ -90,11 +90,11 @@ export default {
                 }
 
                 const responseData = await response.json();
-                console.log('Response after sending:', responseData);
+               // console.log('Response after sending:', responseData);
 
                 // Handle success
                 if (response.ok) {
-                    console.log('Emitting book-saved with:', { book: responseData, isNew: !this.isEditMode });
+                  //  console.log('Emitting book-saved with:', { book: responseData, isNew: !this.isEditMode });
                     this.$emit('book-saved', { book: responseData, isNew: !this.isEditMode });
 
                     this.closeModal();

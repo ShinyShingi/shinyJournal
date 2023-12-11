@@ -27,6 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Other protected routes...
 
 });
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user(); // Returns the authenticated user's details
+});
 
 Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'authenticatedUser']);
 
