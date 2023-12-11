@@ -1,5 +1,5 @@
 <script setup>
-import {ref, nextTick, onMounted, defineProps} from 'vue';
+import {ref, nextTick, onMounted, computed} from 'vue';
 import EditBookModal from "./AddEditBookModal.vue";
 import BookComponent from "./Book.vue";
 import axios from 'axios';
@@ -13,6 +13,9 @@ const completedBooks = ref([]);
 const incompleteBooks = ref([]);
 const inProgressBooks = ref([]);
 
+const totalWantToRead = computed(() => incompleteBooks.value.length);
+const totalCurrentlyReading = computed(() => inProgressBooks.value.length);
+const totalHaveRead = computed(() => completedBooks.value.length);
 
 const dialog = ref(false);
 const removeBook = (id) => {
@@ -192,7 +195,11 @@ onMounted(async () => {
 <template>
     <edit-book-modal ref="editBookModal" v-model:dialog="dialog" @book-saved="handleBookSaved"/>
     <v-container class="profileContainer">
-      <h1> {{ username }}'s Reading List</h1>
+      <h1> Hello, {{ username }},</h1>
+      <h2>Here are your stats:</h2>
+      <p>Books you want to read: {{ totalWantToRead }}</p>
+      <p>Books you are reading: {{ totalCurrentlyReading }}</p>
+      <p>Books you've read: {{ totalHaveRead }}</p>
 
       <h1 class="">My Books</h1>
         <h3 class="ma-2">Books to read:</h3>
