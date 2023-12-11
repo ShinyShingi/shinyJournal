@@ -115,7 +115,7 @@ class BookController extends Controller
             'title' => 'string',
             'author' => 'string',
             'series' => 'string|nullable',
-            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
+            //'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
         ]);
 
         if ($request->hasFile('cover')) {

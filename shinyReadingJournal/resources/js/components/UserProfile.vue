@@ -175,17 +175,7 @@ const handleBookSaved = async (response) => {
 
 
 onMounted(async () => {
-    // const response = await fetch(`/api/books`);
-    //
-    // if (response.ok) {
-    //     const data = await response.json();
-    //     completedBooks.value = data.completedBooks;
-    //     incompleteBooks.value = data.incompleteBooks;
-    //     inProgressBooks.value = data.inProgressBooks;
-    // } else {
-    //     // Handle error
-    //     console.error('Failed to fetch books');
-    // }
+
     await fetchBooks();
 
 });

@@ -44,6 +44,8 @@ export default {
             console.log("openModal called with mode:", mode);
             console.log("Book data received in openModal:", book);
 
+            this.selectedCoverFile = null;
+
             this.editedBook = { ...book };
             this.isEditMode = mode === 'edit';
             if (this.isEditMode) {
@@ -60,8 +62,8 @@ export default {
                 formData.append('series', this.editedBook.series);
 
                 // Check if 'cover' is not null and add it to formData if it exists
-                if (this.editedBook.cover) {
-                    formData.append('cover', this.editedBook.cover);
+                if (this.editedBook.newCover) {
+                    formData.append('cover', this.editedBook.newCover);
                 }
 
                 console.log('FormData before sending:', Array.from(formData.entries()));
@@ -106,7 +108,7 @@ export default {
             }
         },
         handleFileChange(event) {
-            this.editedBook.cover = event.target.files[0];
+            this.editedBook.newCover = event.target.files[0];
         },
         closeModal() {
             this.isEditMode = false;
