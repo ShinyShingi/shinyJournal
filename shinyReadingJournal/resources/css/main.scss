@@ -8,6 +8,7 @@ body {
 }
 .book {
     list-style: none;
+    min-height: 500px;
 }
 .image-container {
     width: 100%;
@@ -27,7 +28,7 @@ body {
 }
 .book-data {
     display: block;
-    min-height: 120px;
+    min-height: 150px;
 }
 
 .v-sheet {
