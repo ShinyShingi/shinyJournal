@@ -7,6 +7,7 @@ use App\Models\Book;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class BookApiController extends Controller
@@ -44,24 +45,25 @@ class BookApiController extends Controller
 
         if ($response->successful()) {
             $booksData = $response->json();
-            $books = $booksData['docs'] ?? []; // Fallback to an empty array if 'docs' is not set
+            $books = $booksData['docs'] ?? [];
 
             foreach ($books as &$book) {
-                // Add cover image URL
+                // Add cover image URL or default image if not available
                 if (isset($book['cover_i'])) {
                     $book['cover_url'] = 'https://covers.openlibrary.org/b/id/' . $book['cover_i'] . '-L.jpg';
                 } else {
-                    $book['cover_url'] = null; // Handle books without cover images
+                    // Set the default cover image URL here
+                    $book['cover_url'] = Storage::url('covers/Default_image.jpg');
                 }
 
-                // Placeholder for additional data processing (e.g., series, genres)
-                // ...
+                // ... additional data processing
             }
 
-            return response()->json(['docs' => $books]); // Ensure the structure matches your Vue component's expectation
+            return response()->json(['docs' => $books]);
         } else {
             return response()->json(['error' => 'Unable to fetch data from Open Library', 'statusCode' => $response->status()], 500);
         }
     }
+
 
 }
