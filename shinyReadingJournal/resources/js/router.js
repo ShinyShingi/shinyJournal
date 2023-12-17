@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import UserProfile from './components/UserProfile.vue';
 import Home from "./components/Home.vue";
+import SearchBooks from "./components/SearchBooks.vue";
 import CallbackComponent from "./components/CallbackComponent.vue";
 
 const isAuthenticated = () => !!localStorage.getItem('token');
@@ -12,6 +13,11 @@ const routes = [
         component: UserProfile,
         name: 'UserProfile',
         meta: { requiresAuth: true },
+    },
+    {
+        path: '/search',
+        name: 'SearchBooks',
+        component: SearchBooks
     },
     { path: '/callback', name: 'Callback', component: CallbackComponent },
 ];
@@ -30,3 +36,4 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+
