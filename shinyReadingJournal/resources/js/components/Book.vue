@@ -4,7 +4,6 @@ import { defineProps } from 'vue';
 const props = defineProps({
     book: Object
 });
-
 const emit = defineEmits(['editBook', 'removeBook', 'updateStatus']);
 
 const removeBook = () => {
@@ -21,8 +20,6 @@ const updateStatus = (newStatus) => {
 
     emit('updateStatus', { id: props.book.id, status: newStatus });
 };
-
-
 
 </script>
 <template>
@@ -50,7 +47,7 @@ const updateStatus = (newStatus) => {
                     Status:
                      <v-select
                          class="form-select mb-3 mt-2"
-                         v-model="props.book.status"
+                         v-model="props.book.pivot.status"
                          :items="['Unread', 'Reading', 'Read']"
                          @update:modelValue="updateStatus"
                      ></v-select>

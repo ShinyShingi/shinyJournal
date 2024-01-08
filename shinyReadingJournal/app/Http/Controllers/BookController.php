@@ -18,9 +18,9 @@ class BookController extends Controller
     {
         $user = auth()->user(); // Get the currently authenticated user
 
-        $completedBooks = $user->books()->wherePivot('status', 'read')->get();
-        $incompleteBooks = $user->books()->wherePivot('status', 'unread')->get();
-        $inProgressBooks = $user->books()->wherePivot('status', 'reading')->get();
+        $completedBooks = $user->books()->wherePivot('status', 'Read')->get();
+        $incompleteBooks = $user->books()->wherePivot('status', 'Unread')->get();
+        $inProgressBooks = $user->books()->wherePivot('status', 'Reading')->get();
 
         return view('start', [
             'completedBooks' => $completedBooks,
