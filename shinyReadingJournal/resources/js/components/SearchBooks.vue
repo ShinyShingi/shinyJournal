@@ -35,7 +35,8 @@
                             </div>
                             <p>{{ book.title }} </p>
                             <p>{{ book.author_name ? book.author_name.join(', ') : 'Unknown Author' }}</p>
-                            <!-- Add more book details here -->
+                            <p>{{book.first_publish_year}}</p>
+<!--                            <p>{{book.isbn}}</p>-->
                         </v-sheet>
                     </div>
                     <div v-else>
@@ -64,6 +65,7 @@ export default {
                 console.log(response.data); // Check the structure here
                 // The next line assumes the structure has a 'docs' array. Adjust if necessary.
                 this.books = response.data.docs || []; // Adding '|| []' as a fallback
+                console.log(response.data.docs)
             } catch (error) {
                 console.error(error);
             }
