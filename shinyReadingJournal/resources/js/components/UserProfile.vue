@@ -128,9 +128,9 @@ const fetchBooks = async () => {
             const data = await response.json();
 
             // Categorize books based on their status in the pivot object
-            completedBooks.value = data.books.filter(book => book.pivot.status === 'read');
-            incompleteBooks.value = data.books.filter(book => book.pivot.status === 'unread');
-            inProgressBooks.value = data.books.filter(book => book.pivot.status === 'reading');
+            completedBooks.value = data.books.filter(book => book.pivot.status === 'Read');
+            incompleteBooks.value = data.books.filter(book => book.pivot.status === 'Unread');
+            inProgressBooks.value = data.books.filter(book => book.pivot.status === 'Reading');
 
         } else {
             console.error('Failed to fetch books');
