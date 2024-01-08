@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -14,21 +15,19 @@ class BookApiController extends Controller
 {
     public function index()
     {
-        // dd(auth()->check());
+        $user = auth()->user();
 
+        $completedBooks = $user->books()->wherePivot('status', 'read')->get();
+        $incompleteBooks = $user->books()->wherePivot('status', 'unread')->get();
+        $inProgressBooks = $user->books()->wherePivot('status', 'reading')->get();
 
-        $books = Book::all();
-        $completedBooks = Book::where('status', 'read')->get();
-        $incompleteBooks = Book::where('status', 'unread')->get();
-        $inProgressBooks = Book::where('status', 'reading')->get();
-
-
-        return response()->json([
+        return view('start', [
             'completedBooks' => $completedBooks,
             'incompleteBooks' => $incompleteBooks,
             'inProgressBooks' => $inProgressBooks
         ]);
     }
+
     public function store(Request $request) {
         $book = Book::create($request->all());
     }

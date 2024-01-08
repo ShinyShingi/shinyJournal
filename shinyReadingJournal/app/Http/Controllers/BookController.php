@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Book;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -15,10 +16,11 @@ class BookController extends Controller
      */
     public function index()
     {
-        $completedBooks = Book::where('status', 'read')->get();
-        $incompleteBooks = Book::where('status', 'unread')->get();
-        $inProgressBooks = Book::where('status', 'reading')->get();
+        $user = auth()->user(); // Get the currently authenticated user
 
+        $completedBooks = $user->books()->wherePivot('status', 'read')->get();
+        $incompleteBooks = $user->books()->wherePivot('status', 'unread')->get();
+        $inProgressBooks = $user->books()->wherePivot('status', 'reading')->get();
 
         return view('start', [
             'completedBooks' => $completedBooks,
@@ -77,9 +79,7 @@ class BookController extends Controller
             'title' => 'required|string',
             'author' => 'required|string',
             'series' => 'string|nullable',
-            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
-            'status' => 'Unread',
-
+            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000'
         ]);
 
         if ($request->hasFile('cover')) {
@@ -142,25 +142,21 @@ class BookController extends Controller
 
     public function updateStatus(Request $request, string $id)
     {
+        $user = auth()->user(); // Get the currently authenticated user
+        $book = Book::find($id);
 
-        $existingBook = Book::find($id);
-        if ($existingBook) {
+        if ($book && $user) {
             $newStatus = $request->input('status');
 
-//            dd($newStatus); // Check if you're receiving the correct status
+            // Update the book's status in the pivot table
+            $user->books()->updateExistingPivot($book->id, ['status' => $newStatus]);
 
-            // Update the book's status in the database
-            $existingBook->status = $newStatus;
-
-
-            $existingBook->save();
-
-            return response()->json(['success' => true, "book"=>$existingBook]);
+            return response()->json(['success' => true, "book" => $book]);
         }
 
         return response()->json(['success' => false, 'message' => 'No book found']);
-
     }
+
 
     /**
      * Remove the specified resource from storage.

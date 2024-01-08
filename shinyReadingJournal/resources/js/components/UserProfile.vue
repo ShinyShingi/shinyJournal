@@ -121,25 +121,25 @@ const addBookToCorrectList = (bookData) => {
     }
 };
 const fetchBooks = async () => {
-  try {
-    const response = await fetch(`/api/${username.value}/books`);
+    try {
+        const response = await fetch(`/api/${username.value}/books`);
 
-    if (response.ok) {
-      const data = await response.json();
-      //console.log(data);
+        if (response.ok) {
+            const data = await response.json();
 
-      // Assuming 'data' is an array of books
-      // Categorize books based on their status
-      completedBooks.value = data.books.filter(book => book.status === 'Read');
-      incompleteBooks.value = data.books.filter(book => book.status === 'Unread');
-      inProgressBooks.value = data.books.filter(book => book.status === 'Reading');
-    } else {
-      console.error('Failed to fetch books');
+            // Categorize books based on their status in the pivot object
+            completedBooks.value = data.books.filter(book => book.pivot.status === 'read');
+            incompleteBooks.value = data.books.filter(book => book.pivot.status === 'unread');
+            inProgressBooks.value = data.books.filter(book => book.pivot.status === 'reading');
+
+        } else {
+            console.error('Failed to fetch books');
+        }
+    } catch (error) {
+        console.error('Error fetching books:', error);
     }
-  } catch (error) {
-    console.error('Error fetching books:', error);
-  }
 };
+
 
 const handleBookSaved = async (response) => {
   console.log('handleBookSaved triggered with:', response);
