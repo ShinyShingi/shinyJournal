@@ -9,7 +9,7 @@
             </v-card-title>
             <v-card-text>
                 <v-container>
-                    <div class="search-container">
+                    <div class="search-container" v-if="!isEditMode">
                         <!-- Search Input Field -->
                         <v-text-field
                             label="Search for books"
@@ -24,7 +24,7 @@
                         </v-btn>
 
                         <!-- Displaying Search Results -->
-                        <v-row>
+                        <v-row class="search-results">
                             <v-col
                                 v-for="book in books"
                                 :key="book.key"
@@ -38,14 +38,13 @@
                             >
                                 <div v-if="books.length > 0">
 
-                                    <v-sheet class="ma-2 pa-2 book">
+                                    <v-sheet class="ma-2 pa-2 book"  @click="selectBookForAdd(book)">
                                         <div class="image-container">
                                             <img class="img-cover" v-if="book.cover_url" :src="book.cover_url" alt="Book Cover">
                                         </div>
                                         <p>{{ book.title }} </p>
                                         <p>{{ book.author_name ? book.author_name.join(', ') : 'Unknown Author' }}</p>
                                         <p>{{book.first_publish_year}}</p>
-                                        <!--                            <p>{{book.isbn}}</p>-->
                                     </v-sheet>
                                 </div>
                                 <div v-else>
@@ -56,7 +55,7 @@
                     </div>
                 </v-container>
                 <v-container>
-                    <h2  class="mb-5">Didn't find what you were looking for? Add it yourself!</h2>
+                    <h2  class="mb-5" v-if="!isEditMode">Didn't find what you were looking for? Add it yourself!</h2>
                     <v-form @submit.prevent="saveBook" enctype="multipart/form-data">
                         <input type="hidden" id="edit-id">
                         <v-text-field label="Title" v-model="editedBook.title" required></v-text-field>
@@ -92,6 +91,25 @@ export default {
         };
     },
     methods: {
+        async uploadImage(file) {
+            console.log(file[0]);
+            const actualFile = file[0]; // Extracting the File object from the array
+            const formData = new FormData();
+            formData.append('image', actualFile);
+
+            try {
+                const response = await axios.post('/api/upload-image', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+                return response.data.url;
+            } catch (error) {
+                console.error('Error uploading image:', error.response.data);
+                return null;
+            }
+        }
+        ,
         async searchBooks() {
             try {
                 const response = await axios.get('/api/search', {params: {query: this.searchQuery}});
@@ -102,6 +120,16 @@ export default {
             } catch (error) {
                 console.error(error);
             }
+        },
+        selectBookForAdd(book) {
+            console.log("selected book:", book.cover_url)
+            this.editedBook = {
+                title: book.title,
+                author: book.author_name ? book.author_name.join(', ') : '',
+                series: '',
+                cover: book.cover_url ? book.cover_url : null,
+            };
+            this.saveBook();
         },
         openModal(book, mode) {
             console.log("openModal called with mode:", mode);
@@ -118,58 +146,54 @@ export default {
         },
         async saveBook() {
             console.log("Saving book with data:", this.editedBook);
+
             try {
                 const formData = new FormData();
                 formData.append('title', this.editedBook.title);
                 formData.append('author', this.editedBook.author);
                 formData.append('series', this.editedBook.series);
 
-                // Check if 'cover' is not null and add it to formData if it exists
+                // Check if there's a new cover file to upload
                 if (this.editedBook.newCover) {
-                    formData.append('cover', this.editedBook.newCover);
+                    const coverUrl = await this.uploadImage(this.editedBook.newCover);
+                    if (coverUrl) {
+                        this.editedBook.cover = coverUrl; // Update the cover field with the URL
+                        formData.append('cover', coverUrl); // Append the URL to formData
+                    } else {
+                        throw new Error('Failed to upload the cover image.');
+                    }
+                } else if (this.editedBook.cover) {
+                    formData.append('cover', this.editedBook.cover); // Use existing cover URL
+                } else if (!this.isEditMode) {
+                    throw new Error('Cover image is required for new books.');
                 }
 
-                console.log('FormData before sending:', Array.from(formData.entries()));
+                // API request URL
+                const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/books';
 
-                let response;
-                if (this.isEditMode) {
-                    // Using fetch with POST method and _method field for PUT spoofing
-                    response = await fetch(`/api/books/${this.bookId}`, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                    });
-                } else {
-                    // Using fetch for a standard POST request
-                    response = await fetch('/api/books', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                        },
-                    });
-                }
+                // Send the request
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
 
                 const responseData = await response.json();
-               // console.log('Response after sending:', responseData);
 
-                // Handle success
                 if (response.ok) {
-                  //  console.log('Emitting book-saved with:', { book: responseData, isNew: !this.isEditMode });
                     this.$emit('book-saved', { book: responseData, isNew: !this.isEditMode });
-
                     this.closeModal();
-
                 } else {
                     console.error('Failed to save the book:', responseData);
                 }
             } catch (error) {
-                // Handle error
                 console.error('Error saving book:', error);
             }
-        },
+        }
+        ,
+
         handleFileChange(event) {
             this.editedBook.newCover = event.target.files[0];
         },

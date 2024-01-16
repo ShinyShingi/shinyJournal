@@ -7,6 +7,7 @@ use App\Models\Book;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class BookController extends Controller
@@ -14,6 +15,19 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function uploadImage(Request $request)
+    {
+//        Log::info('All Request Data:', $request->all());
+//        Log::info('File from request file method:', $request->file('image'));
+//        Log::info('File from request input method:', $request->input('image'));
+        $request->validate(['image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']);
+
+        $path = $request->file('image')->store('covers', 'public');
+        return response()->json(['url' => Storage::url($path)]);
+    }
+
+
+
     public function index()
     {
         $user = auth()->user(); // Get the currently authenticated user
@@ -79,7 +93,9 @@ class BookController extends Controller
             'title' => 'required|string',
             'author' => 'required|string',
             'series' => 'string|nullable',
-            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000'
+//            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000'
+            'cover' => 'nullable|string|url'
+
         ]);
 
         if ($request->hasFile('cover')) {

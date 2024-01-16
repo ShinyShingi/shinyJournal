@@ -41,3 +41,4 @@ Route::post('books', [BookController::class, 'store']);
 Route::put('books/{id}', [BookController::class, 'updateBook']);
 Route::post('books/{id}', [BookController::class, 'updateBook']);
 Route::get('search', [BookApiController::class, 'openlibrary']);
+Route::post('upload-image', [BookController::class, 'uploadImage']);
