@@ -94,7 +94,7 @@ class BookController extends Controller
             'author' => 'required|string',
             'series' => 'string|nullable',
 //            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000'
-            'cover' => 'nullable|string|url'
+            'cover' => 'nullable|string'
 
         ]);
 

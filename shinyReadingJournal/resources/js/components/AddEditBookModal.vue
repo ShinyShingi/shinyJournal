@@ -92,8 +92,8 @@ export default {
     },
     methods: {
         async uploadImage(file) {
-            console.log(file[0]);
-            const actualFile = file[0]; // Extracting the File object from the array
+            console.log(file);
+            const actualFile = file; // Extracting the File object from the array
             const formData = new FormData();
             formData.append('image', actualFile);
 
@@ -108,8 +108,7 @@ export default {
                 console.error('Error uploading image:', error.response.data);
                 return null;
             }
-        }
-        ,
+        },
         async searchBooks() {
             try {
                 const response = await axios.get('/api/search', {params: {query: this.searchQuery}});

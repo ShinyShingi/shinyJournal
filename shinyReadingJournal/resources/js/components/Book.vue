@@ -47,8 +47,7 @@ const updateStatus = (newStatus) => {
                     Status:
                      <v-select
                          class="form-select mb-3 mt-2"
-                         v-model="props.book.pivot.status"
-                         :items="['Unread', 'Reading', 'Read']"
+git                         :items="['Unread', 'Reading', 'Read']"
                          @update:modelValue="updateStatus"
                      ></v-select>
                 </span>
