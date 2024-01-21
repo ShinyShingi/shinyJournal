@@ -23,7 +23,10 @@ class BookController extends Controller
         $request->validate(['image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048']);
 
         $path = $request->file('image')->store('covers', 'public');
-        return response()->json(['url' => Storage::url($path)]);
+        $url = env('APP_URL') . '/storage/app/public/' . $path;
+        return response()->json(['url' => $url]);
+
+//        return response()->json(['url' => Storage::url($path)]);
     }
 
 
