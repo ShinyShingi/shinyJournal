@@ -1,11 +1,10 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, ref, onMounted } from 'vue';
 
 const props = defineProps({
     book: Object
 });
 const emit = defineEmits(['editBook', 'removeBook', 'updateStatus']);
-
 const removeBook = () => {
     emit('removeBook', props.book.id);
 };
@@ -47,7 +46,8 @@ const updateStatus = (newStatus) => {
                     Status:
                      <v-select
                          class="form-select mb-3 mt-2"
-git                         :items="['Unread', 'Reading', 'Read']"
+                         v-model="props.book.pivot.status"
+                         :items="['Unread', 'Reading', 'Read']"
                          @update:modelValue="updateStatus"
                      ></v-select>
                 </span>

@@ -142,54 +142,50 @@ const fetchBooks = async () => {
 
 
 const handleBookSaved = async (response) => {
-  console.log('handleBookSaved triggered with:', response);
+    console.log('handleBookSaved triggered with:', response);
 
-  let book;
-  const { isNew } = response;
+    let book;
+    const { isNew } = response;
 
-  if (isNew) {
-    // When adding a new book, the structure might be different
-    // Adjust this line based on the actual structure when adding a new book
-    book = response.book.book;
-    console.log("adding new book", book);
-
-  } else {
-    // When editing a book
-    const { book: nestedBook } = response;
-    book = nestedBook;
-  }
-
-  if (!book) {
-    console.error('Book object is undefined:', response);
-    return; // Exit the function if book is undefined
-  }
-
-  if (isNew) {
-    // Handle the addition of a new book
-        incompleteBooks.value.push(book);
-        console.log('book added successfuly:', book)
-
-  } else {
-    // Handle updating an existing book
-    const updateList = (list) => {
-      const index = list.value.findIndex(b => b.id === book.id);
-      if (index !== -1) {
-        list.value.splice(index, 1, book);
-      }
-    };
-
-    switch (book.status) {
-      case 'Unread':
-        updateList(incompleteBooks);
-        break;
-      case 'Reading':
-        updateList(inProgressBooks);
-        break;
-      case 'Read':
-        updateList(completedBooks);
-        break;
+    if (isNew) {
+        book = response.book.book;
+        console.log("adding new book", book);
+    } else {
+        const { book: nestedBook } = response;
+        book = nestedBook;
     }
-  }
+
+    if (!book) {
+        console.error('Book object is undefined:', response);
+        return;
+    }
+
+    // Ensure that you're accessing the status from the pivot data
+    const bookStatus = book.pivot ? book.pivot.status : book.status;
+
+    if (isNew) {
+        incompleteBooks.value.push(book);
+        console.log('book added successfully:', book);
+    } else {
+        const updateList = (list) => {
+            const index = list.value.findIndex(b => b.id === book.id);
+            if (index !== -1) {
+                list.value.splice(index, 1, book);
+            }
+        };
+
+        switch (bookStatus) {
+            case 'Unread':
+                updateList(incompleteBooks);
+                break;
+            case 'Reading':
+                updateList(inProgressBooks);
+                break;
+            case 'Read':
+                updateList(completedBooks);
+                break;
+        }
+    }
 
   // Optional: Refresh the books list from the server
   await fetchBooks();
