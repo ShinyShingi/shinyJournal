@@ -108,17 +108,22 @@ class BookController extends Controller
             $validatedData['cover'] = $coverPath;
         }
 
-        $book = Book::create($validatedData);
+        $existingBook = Book::where('title', $validatedData['title'])
+            ->where('author', $validatedData['author'])
+            ->first();
 
-        $userId = auth()->id(); // Get the ID of the authenticated user
-        if ($userId) {
+        if ($existingBook) {
+            // Book exists, add it to the user's reading list instead
+            $userId = auth()->id();
+            $existingBook->users()->attach($userId);
+            return response()->json(['message' => 'Book already exists, added to your reading list', 'book' => $existingBook]);
+        } else {
+            // Book does not exist, create a new book
+            $book = Book::create($validatedData);
+            $userId = auth()->id();
             $book->users()->attach($userId);
+            return response()->json(['message' => 'New book created and added to your reading list', 'book' => $book]);
         }
-
-        Log::info('Book created:', ['book' => $book->toArray()]);
-        Log::info('Attaching book to user ID:', ['userId' => $userId]);
-
-        return response()->json(['book' => $book, 'isNew' => true, 'message' => 'Book created successfully']);
 
 
     }
