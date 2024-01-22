@@ -43,7 +43,7 @@
                                             <img class="img-cover" v-if="book.cover_url" :src="book.cover_url" alt="Book Cover">
                                         </div>
                                         <p>{{ book.title }} </p>
-                                        <p>{{ book.author_name ? book.author_name.join(', ') : 'Unknown Author' }}</p>
+                                        <p>{{ book.author_name ? book.author_name.join(', ') : book.author ? book.author : 'Unknown Author' }}</p>
                                         <p>{{book.first_publish_year}}</p>
                                     </v-sheet>
                                 </div>

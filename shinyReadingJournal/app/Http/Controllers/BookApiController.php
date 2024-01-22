@@ -40,29 +40,41 @@ class BookApiController extends Controller
 
     public function openlibrary(Request $request) {
         $searchTerm = $request->input('query', '');
-        $response = Http::get("https://openlibrary.org/search.json?q=" . urlencode($searchTerm));
 
-        if ($response->successful()) {
-            $booksData = $response->json();
-            $books = $booksData['docs'] ?? [];
+        // Search in the local database
+        $localBooks = Book::where('title', 'like', "%{$searchTerm}%")
+            ->orWhere('author', 'like', "%{$searchTerm}%")
+            ->get();
 
-            foreach ($books as &$book) {
-                // Add cover image URL or default image if not available
-                if (isset($book['cover_i'])) {
-                    $book['cover_url'] = 'https://covers.openlibrary.org/b/id/' . $book['cover_i'] . '-L.jpg';
-                } else {
-                    // Set the default cover image URL here
-                    $book['cover_url'] = Storage::url('covers/Default_image.jpg');
+        // Initialize an array to hold all the books
+        $allBooks = $localBooks->toArray();
+
+        // If fewer than 5 books are found in local database, search in Open Library
+        if ($localBooks->count() < 5) {
+            $response = Http::get("https://openlibrary.org/search.json?q=" . urlencode($searchTerm));
+
+            if ($response->successful()) {
+                $booksData = $response->json();
+                $openLibraryBooks = $booksData['docs'] ?? [];
+
+                foreach ($openLibraryBooks as &$book) {
+                    // Process book data from Open Library
+                    $book['cover_url'] = isset($book['cover_i'])
+                        ? 'https://covers.openlibrary.org/b/id/' . $book['cover_i'] . '-L.jpg'
+                        : Storage::url('covers/Default_image.jpg');
                 }
 
-                // ... additional data processing
+                // Add Open Library books to the array of all books
+                $allBooks = array_merge($allBooks, $openLibraryBooks);
+            } else {
+                return response()->json(['error' => 'Unable to fetch data from Open Library', 'statusCode' => $response->status()], 500);
             }
-
-            return response()->json(['docs' => $books]);
-        } else {
-            return response()->json(['error' => 'Unable to fetch data from Open Library', 'statusCode' => $response->status()], 500);
         }
+
+        return response()->json(['docs' => $allBooks]);
     }
+
+
 
 
 }
