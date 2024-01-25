@@ -7,6 +7,7 @@ import Register from "./components/Register.vue";
 import UserProfile from "./components/UserProfile.vue";
 import AddEditBookModal from "./components/AddEditBookModal.vue";
 import { reactive, watch, provide } from 'vue';
+import vue3StarRatings from "vue3-star-ratings";
 
 
 export default {
@@ -16,7 +17,8 @@ export default {
         Navbar,
         Login,
         UserProfile,
-        AddEditBookModal
+        AddEditBookModal,
+        vue3StarRatings
         //Books
     },
     setup() {

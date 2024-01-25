@@ -163,17 +163,38 @@ class BookController extends Controller
     }
 
 
+    public function rate(Request $request, Book $book)
+    {
+        $request->validate([
+            'rating' => 'required|numeric|min:1|max:5', // updated to accept floats
+        ]);
+
+        $rating = $request->input('rating');
+
+        // Assuming you have an authenticated user
+        $user = auth()->user();
+        $user->books()->updateExistingPivot($book->id, ['rating' => $rating]);
+
+        return response()->json(['message' => 'Rating updated successfully.']);
+    }
 
     public function updateStatus(Request $request, string $id)
     {
         $user = auth()->user(); // Get the currently authenticated user
-        $book = Book::find($id);
+//        $book = Book::find($id);
+        $book = $user->books()->findOrFail($id);
 
         if ($book && $user) {
             $newStatus = $request->input('status');
 
             // Update the book's status in the pivot table
-            $user->books()->updateExistingPivot($book->id, ['status' => $newStatus]);
+
+            $result = $user->books()->updateExistingPivot($book->id, ['status' => $newStatus]);
+//            dd($result);
+
+//            $book->refresh();
+            $book = $user->books()->findOrFail($id);
+
 
             return response()->json(['success' => true, "book" => $book]);
         }

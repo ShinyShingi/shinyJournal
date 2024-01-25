@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, ref, onMounted } from 'vue';
-
+import vue3StarRatings from "vue3-star-ratings";
 const props = defineProps({
     book: Object
 });
@@ -38,11 +38,12 @@ const updateStatus = (newStatus) => {
                 <div class="image-container">
                     <img :src="$getImageUrl(props.book.cover)" class="img-cover" :key="props.book.cover" alt="Cover Image">
                 </div>
-                <h4 class="mt-5">{{ props.book.title }}</h4>
-                <h5>{{ props.book.author }}</h5>
-                <p>{{ props.book.series }}</p>
+                <div class="details-container">
+                    <h4 class="mt-5">{{ props.book.title }}</h4>
+                    <h5>{{ props.book.author }}</h5>
+                    <p class="series">{{ props.book.series }}</p>
 
-                <span>
+                    <span>
                     Status:
                      <v-select
                          class="form-select mb-3 mt-2"
@@ -50,11 +51,13 @@ const updateStatus = (newStatus) => {
                          :items="['Unread', 'Reading', 'Read']"
                          @update:modelValue="updateStatus"
                      ></v-select>
+                    <vue3-star-ratings class="mb-3" v-if="props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read'" v-model="rating" />
                 </span>
-                <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
-                <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">
-                    <i class="fa fa-pencil"></i>
-                </v-btn>
+                    <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
+                    <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">
+                        <i class="fa fa-pencil"></i>
+                    </v-btn>
+                </div>
             </div>
         </v-sheet>
     </v-col>
