@@ -75,7 +75,7 @@ const updateStatus = (newStatus) => {
                             class="mb-3"
                             v-if="props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read'"
                             v-model="computedRating"
-                            @rating-changed="updateRating(props.book)"
+                            @update:modelValue="updateRating(props.book)"
                     />
 
                 </span>

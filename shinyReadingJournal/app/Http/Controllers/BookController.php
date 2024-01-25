@@ -163,19 +163,45 @@ class BookController extends Controller
     }
 
 
-    public function rate(Request $request, Book $book)
+    public function rate(Request $request, $id)
     {
+
         $request->validate([
-            'rating' => 'required|numeric|min:1|max:5', // updated to accept floats
+            'rating' => 'required|numeric|min:1|max:5',
         ]);
 
         $rating = $request->input('rating');
 
+        $book = Book::find($id);
+        if (!$book) {
+            return response()->json(['message' => 'Book not found.'], 404);
+        }
+
+        Log::info('Received update data:', ['rating' => $rating]);
+
         // Assuming you have an authenticated user
         $user = auth()->user();
-        $user->books()->updateExistingPivot($book->id, ['rating' => $rating]);
+        Log::info('Book ID:', ['id' => $book->id]);
 
-        return response()->json(['message' => 'Rating updated successfully.']);
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized access.'], 401);
+        }
+
+        try {
+            $updateSuccessful = $user->books()->updateExistingPivot($book->id, ['rating' => $rating]);
+
+            if ($updateSuccessful) {
+                Log::info("Rating updated successfully for book ID: {$book->id}");
+                return response()->json(['message' => 'Rating updated successfully.']);
+            } else {
+                Log::info("Failed to update rating for book ID: {$book->id}");
+                return response()->json(['message' => 'Failed to update rating.'], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error("Error updating rating for book ID: {$book->id}. Error: " . $e->getMessage());
+            return response()->json(['message' => 'An error occurred while updating the rating.'], 500);
+        }
     }
 
     public function updateStatus(Request $request, string $id)
