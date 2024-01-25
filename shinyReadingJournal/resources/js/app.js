@@ -5,7 +5,9 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import router from './router.js'
 import { reactive, provide, inject } from "vue"
-import imagePlugin from './plugins/imagePlugin' // Adjust the import path as necessary
+import imagePlugin from './plugins/imagePlugin'
+import vue3StarRatings from "vue3-star-ratings";
+
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
@@ -27,13 +29,13 @@ const vuetify = createVuetify({
     components,
     directives,
 })
+app.component("vue3-star-ratings", vue3StarRatings);
 
 // Mount the app
 app.use(vuetify)
 app.use(router)
 app.use(imagePlugin) // Use the plugin
 
-// Import your custom styles after Vuetify's styles
 import '../css/main.scss'
 
 app.mount('#app')

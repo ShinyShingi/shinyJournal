@@ -1,6 +1,9 @@
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import {defineProps, ref, onMounted, defineComponent, computed} from 'vue';
 import vue3StarRatings from "vue3-star-ratings";
+import axios from 'axios';
+
+
 const props = defineProps({
     book: Object
 });
@@ -13,7 +16,24 @@ const editBook = () => {
     console.log("editBook clicked")
     emit('editBook', props.book.id);
 };
-
+const updateRating = (book) => {
+    console.log("updateRating called", book);
+    axios.post(`/api/books/${book.id}/rate`, { rating: book.pivot.rating })
+        .then(response => {
+            console.log(response.data.message);
+            // Handle success
+        })
+        .catch(error => {
+            console.error(error);
+            // Handle error
+        });
+}
+const computedRating = computed({
+    get: () => props.book.pivot.rating !== null ? props.book.pivot.rating : null,
+    set: (value) => {
+        props.book.pivot.rating = value;
+    }
+});
 const updateStatus = (newStatus) => {
     console.log("Initial book cover:", props.book.cover);
 
@@ -51,7 +71,13 @@ const updateStatus = (newStatus) => {
                          :items="['Unread', 'Reading', 'Read']"
                          @update:modelValue="updateStatus"
                      ></v-select>
-                    <vue3-star-ratings class="mb-3" v-if="props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read'" v-model="rating" />
+                    <vue3-star-ratings
+                            class="mb-3"
+                            v-if="props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read'"
+                            v-model="computedRating"
+                            @rating-changed="updateRating(props.book)"
+                    />
+
                 </span>
                     <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
                     <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">

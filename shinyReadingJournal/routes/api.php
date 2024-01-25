@@ -42,4 +42,4 @@ Route::put('books/{id}', [BookController::class, 'updateBook']);
 Route::post('books/{id}', [BookController::class, 'updateBook']);
 Route::get('search', [BookApiController::class, 'openlibrary']);
 Route::post('upload-image', [BookController::class, 'uploadImage']);
-Route::post('/books/{book}/rate', [BookController::class, 'rate']);
+Route::post('/books/{id}/rate', [BookController::class, 'rate']);
