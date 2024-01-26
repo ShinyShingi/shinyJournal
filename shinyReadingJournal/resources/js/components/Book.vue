@@ -1,5 +1,5 @@
 <script setup>
-import {defineProps, ref, onMounted, defineComponent, computed} from 'vue';
+import {defineProps, ref, onMounted, defineComponent, computed, watch} from 'vue';
 import vue3StarRatings from "vue3-star-ratings";
 import axios from 'axios';
 
@@ -8,6 +8,18 @@ const props = defineProps({
     book: Object
 });
 const emit = defineEmits(['editBook', 'removeBook', 'updateStatus']);
+
+const rating = ref(0)
+
+onMounted(()=>{
+    if (props.book?.pivot?.rating){
+        rating.value = props.book.pivot.rating;
+    }
+})
+
+watch(rating,(newRating)=>{
+    console.log("rating changed, ", newRating)
+})
 const removeBook = () => {
     emit('removeBook', props.book.id);
 };
@@ -16,9 +28,9 @@ const editBook = () => {
     console.log("editBook clicked")
     emit('editBook', props.book.id);
 };
-const updateRating = (book) => {
-    console.log("updateRating called", book);
-    axios.post(`/api/books/${book.id}/rate`, { rating: book.pivot.rating })
+const updateRating = (newRating) => {
+    console.log("updateRating called", props.book, newRating);
+    axios.post(`/api/books/${props.book.id}/rate`, { rating: newRating })
         .then(response => {
             console.log(response.data.message);
             // Handle success
@@ -29,9 +41,10 @@ const updateRating = (book) => {
         });
 }
 const computedRating = computed({
-    get: () => props.book.pivot.rating !== null ? props.book.pivot.rating : null,
+    get: () => rating.value,
     set: (value) => {
-        props.book.pivot.rating = value;
+        rating.value = value;
+        updateRating(value)
     }
 });
 const updateStatus = (newStatus) => {
@@ -75,7 +88,6 @@ const updateStatus = (newStatus) => {
                             class="mb-3"
                             v-if="props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read'"
                             v-model="computedRating"
-                            @update:modelValue="updateRating(props.book)"
                     />
 
                 </span>
