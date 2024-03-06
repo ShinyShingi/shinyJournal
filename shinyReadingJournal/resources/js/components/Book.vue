@@ -18,7 +18,7 @@ onMounted(()=>{
 })
 
 watch(rating,(newRating)=>{
-    console.log("rating changed, ", newRating)
+    // console.log("rating changed, ", newRating)
 })
 const removeBook = () => {
     emit('removeBook', props.book.id);
@@ -49,10 +49,16 @@ const computedRating = computed({
 });
 const updateStatus = (newStatus) => {
     console.log("Initial book cover:", props.book.cover);
+    console.log("read time: ", props.book.reat_at)
 
     emit('updateStatus', { id: props.book.id, status: newStatus });
 };
+const formatDate = (dateString) => {
+    if (!dateString) return ''; // Handle null or undefined case
 
+    const options = { year: 'numeric' , day: 'numeric', month: 'long' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+};
 </script>
 <template>
     <v-col
@@ -80,16 +86,20 @@ const updateStatus = (newStatus) => {
                     Status:
                      <v-select
                          class="form-select mb-3 mt-2"
+                         v-if="props.book && props.book.pivot"
                          v-model="props.book.pivot.status"
                          :items="['Unread', 'Reading', 'Read']"
                          @update:modelValue="updateStatus"
                      ></v-select>
+
                     <vue3-star-ratings
                             class="mb-3"
-                            v-if="props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read'"
+                            v-if="props.book && props.book.pivot && (props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read')"
                             v-model="computedRating"
                     />
-
+                     <p v-if="props.book && props.book.pivot && props.book.pivot.status === 'Read'">
+                          Read at: {{ formatDate(props.book.pivot.read_at) }}
+                     </p>
                 </span>
                     <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
                     <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">

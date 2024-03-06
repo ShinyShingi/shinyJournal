@@ -215,7 +215,7 @@ class BookController extends Controller
 
             // Update the book's status in the pivot table
 
-            $result = $user->books()->updateExistingPivot($book->id, ['status' => $newStatus]);
+            $result = $user->books()->updateExistingPivot($book->id, ['status' => $newStatus, 'read_at'=> now()]);
 //            dd($result);
 
 //            $book->refresh();

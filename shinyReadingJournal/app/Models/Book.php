@@ -16,10 +16,11 @@ class Book extends Model
         'review',
         'cover',
         'status',
+        'read_at',
     ];
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'book_user')->withPivot('rating');
+        return $this->belongsToMany(User::class, 'book_user')->withPivot('rating', 'read_at');
     }
 }
