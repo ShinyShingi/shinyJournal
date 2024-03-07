@@ -78,10 +78,12 @@ const formatDate = (dateString) => {
                     <img :src="$getImageUrl(props.book.cover)" class="img-cover" :key="props.book.cover" alt="Cover Image">
                 </div>
                 <div class="details-container">
-                    <h4 class="mt-5">{{ props.book.title }}</h4>
-                    <h5>{{ props.book.author }}</h5>
-                    <p class="series">{{ props.book.series }}</p>
 
+                    <div class="details">
+                        <h4 class="mt-5">{{ props.book.title }}</h4>
+                        <h5>{{ props.book.author }}</h5>
+                        <p class="series">{{ props.book.series }}</p>
+                    </div>
                     <span>
                     Status:
                      <v-select
