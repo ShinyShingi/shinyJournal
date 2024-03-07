@@ -63,6 +63,8 @@
                         <v-text-field label="Series" v-model="editedBook.series"></v-text-field>
                         <v-file-input label="Cover Image" v-model="selectedCoverFile" @change="handleFileChange" accept="image/*"></v-file-input>
                         <input type="text" v-if="selectedCoverFile" :value="selectedCoverFile.name" readonly>
+                        <h3>Read on: </h3>
+                        <v-date-picker v-model="editedBook.read_at" no-title scrollable></v-date-picker>
                         <v-btn type="submit" color="primary">{{ isEditMode ? 'Update' : 'Add' }}</v-btn>
                     </v-form>
                 </v-container>
@@ -81,6 +83,7 @@ export default {
                 author: '',
                 series: '',
                 cover: null,
+                read_at: ''
             },
             searchQuery: '',
             books: [],
@@ -151,6 +154,7 @@ export default {
                 formData.append('title', this.editedBook.title);
                 formData.append('author', this.editedBook.author);
                 formData.append('series', this.editedBook.series);
+                formData.append('read_at', this.editedBook.read_at);
 
                 // Check if there's a new cover file to upload
                 if (this.editedBook.newCover) {

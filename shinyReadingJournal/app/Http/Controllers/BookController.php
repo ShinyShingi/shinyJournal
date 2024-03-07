@@ -141,15 +141,22 @@ class BookController extends Controller
             'title' => 'string',
             'author' => 'string',
             'series' => 'string|nullable',
+//            'read_at' =>'date|nullable'
             //'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
         ]);
 
         if ($request->hasFile('cover')) {
+            // Delete the old cover image if it exists
+            if ($book->cover && Storage::disk('public')->exists($book->cover)) {
+                Storage::disk('public')->delete($book->cover);
+            }
+
             $cover = $request->file('cover');
-            $coverPath = $cover->store('covers', 'public');  // Store the uploaded file
+            $coverPath = $cover->store('covers', 'public');
 
             $data['cover'] = $coverPath;
         }
+
         Log::info('Received update data:', $request->all());
 
         $book->update($data);
