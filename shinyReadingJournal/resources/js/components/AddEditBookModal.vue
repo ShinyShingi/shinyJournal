@@ -40,7 +40,7 @@
 
                                     <v-sheet class="ma-2 pa-2 book"  @click="selectBookForAdd(book)">
                                         <div class="image-container">
-                                            <img class="img-cover" v-if="book.cover_url" :src="book.cover_url" alt="Book Cover">
+                                            <img class="img-cover" v-if="book.cover_url || book.cover" :src="book.cover_url ? book.cover_url : book.cover" alt="Book Cover">
                                         </div>
                                         <p>{{ book.title }} </p>
                                         <p>{{ book.author_name ? book.author_name.join(', ') : book.author ? book.author : 'Unknown Author' }}</p>
@@ -115,9 +115,8 @@ export default {
         async searchBooks() {
             try {
                 const response = await axios.get('/api/search', {params: {query: this.searchQuery}});
-                console.log(response.data); // Check the structure here
-                // The next line assumes the structure has a 'docs' array. Adjust if necessary.
-                this.books = response.data.docs || []; // Adding '|| []' as a fallback
+                console.log(response.data);
+                this.books = response.data.docs || [];
                 console.log(response.data.docs)
             } catch (error) {
                 console.error(error);
