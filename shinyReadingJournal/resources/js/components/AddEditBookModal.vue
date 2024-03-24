@@ -151,23 +151,25 @@ export default {
             const formData = new FormData();
             formData.append('title', this.editedBook.title);
             formData.append('author', this.editedBook.author);
-            formData.append('series', this.editedBook.series);
-            formData.append('read_at', this.editedBook.read_at);
+            formData.append('series', this.editedBook.series || ''); // Handle null or undefined
+            formData.append('read_at', this.editedBook.read_at || ''); // Handle null or undefined
 
             if (this.editedBook.newCover) {
+                // If there's a new cover file, upload it and append the returned URL
                 const coverUrl = await this.uploadImage(this.editedBook.newCover);
                 if (coverUrl) {
+                    // Assuming the server returns a full URL, adjust as needed
                     const relativeCoverUrl = new URL(coverUrl).pathname;
                     const adjustedCoverUrl = relativeCoverUrl.replace('/storage/app/public/', '/storage/');
-                    this.editedBook.cover = adjustedCoverUrl;
                     formData.append('cover', adjustedCoverUrl);
                 } else {
                     console.error('Failed to upload the cover image.');
                     return;
                 }
-            } else if (this.editedBook.cover && !this.editedBook.newCover) {
-                // If handling existing covers differently, adjust here
-                // Otherwise, this condition can be removed if you're not appending the cover field
+            } else if (this.editedBook.cover) {
+                // If there's an existing cover URL (e.g., from Open Library), append it directly
+                // This assumes that 'cover' contains a valid URL or relative path
+                formData.append('cover', this.editedBook.cover);
             }
 
             // Add the _method field in edit mode to indicate a PUT request

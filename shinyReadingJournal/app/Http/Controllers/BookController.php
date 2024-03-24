@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
@@ -90,44 +92,39 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-       // dd($request->all());
-
-        $validatedData = $request->validate([
+        // Validate the incoming request data
+        $validatedData = Validator::make($request->all(), [
             'title' => 'required|string',
             'author' => 'required|string',
             'series' => 'string|nullable',
-//            'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000'
             'cover' => 'nullable|string'
+        ])->validate();
 
-        ]);
-
+        // Handle file upload if a cover file is provided
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
             $coverPath = $cover->store('covers', 'public');
+            // Store the relative path for the cover image
+            $validatedData['cover'] = Str::replaceFirst('public/', '/storage/', $coverPath);
+        } // No need for an else block, if a cover URL is provided, it's already included in $validatedData
 
-            $validatedData['cover'] = Str::replaceFirst('public/', '', $coverPath);
-        }
-
-
-
+        // Check if the book already exists
         $existingBook = Book::where('title', $validatedData['title'])
             ->where('author', $validatedData['author'])
             ->first();
 
         if ($existingBook) {
-            // Book exists, add it to the user's reading list instead
+            // If the book exists, attach it to the user's reading list
             $userId = auth()->id();
             $existingBook->users()->attach($userId);
             return response()->json(['message' => 'Book already exists, added to your reading list', 'book' => $existingBook]);
         } else {
-            // Book does not exist, create a new book
+            // If the book does not exist, create a new book entry
             $book = Book::create($validatedData);
             $userId = auth()->id();
             $book->users()->attach($userId);
             return response()->json(['message' => 'New book created and added to your reading list', 'book' => $book]);
         }
-
-
     }
 
 
@@ -144,7 +141,7 @@ class BookController extends Controller
             'author' => 'string',
             'series' => 'string|nullable',
 //            'read_at' =>'date|nullable',
-            'cover' => 'nullable|string' // Ensure 'cover' is included here
+//            'cover' => 'nullable|string'
         ]);
 
         if ($request->has('cover')) {
