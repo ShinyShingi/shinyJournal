@@ -87,16 +87,16 @@ export default {
             },
             searchQuery: '',
             books: [],
-            selectedCoverFile: null, // Store the selected file
+            selectedCoverFile: null,
             isEditMode: false,
             bookId: null,
-            dialog: false, // Define 'dialog' here
+            dialog: false,
         };
     },
     methods: {
         async uploadImage(file) {
             console.log(file);
-            const actualFile = file; // Extracting the File object from the array
+            const actualFile = file;
             const formData = new FormData();
             formData.append('image', actualFile);
 
@@ -148,34 +148,36 @@ export default {
         async saveBook() {
             console.log("Saving book with data:", this.editedBook);
 
-            try {
-                const formData = new FormData();
-                formData.append('title', this.editedBook.title);
-                formData.append('author', this.editedBook.author);
-                formData.append('series', this.editedBook.series);
-                formData.append('read_at', this.editedBook.read_at);
+            const formData = new FormData();
+            formData.append('title', this.editedBook.title);
+            formData.append('author', this.editedBook.author);
+            formData.append('series', this.editedBook.series);
+            formData.append('read_at', this.editedBook.read_at);
 
-                // Check if there's a new cover file to upload
-                if (this.editedBook.newCover) {
-                    const coverUrl = await this.uploadImage(this.editedBook.newCover);
-                    if (coverUrl) {
-                        this.editedBook.cover = coverUrl; // Update the cover field with the URL
-                        formData.append('cover', coverUrl); // Append the URL to formData
-                    } else {
-                        throw new Error('Failed to upload the cover image.');
-                    }
-                } else if (this.editedBook.cover) {
-                    formData.append('cover', this.editedBook.cover); // Use existing cover URL
-                } else if (!this.isEditMode) {
-                    throw new Error('Cover image is required for new books.');
+            if (this.editedBook.newCover) {
+                const coverUrl = await this.uploadImage(this.editedBook.newCover);
+                if (coverUrl) {
+                    const relativeCoverUrl = new URL(coverUrl).pathname;
+                    const adjustedCoverUrl = relativeCoverUrl.replace('/storage/app/public/', '/storage/');
+                    this.editedBook.cover = adjustedCoverUrl;
+                    formData.append('cover', adjustedCoverUrl);
+                } else {
+                    console.error('Failed to upload the cover image.');
+                    return;
                 }
+            } else if (this.editedBook.cover && !this.editedBook.newCover) {
+                // If handling existing covers differently, adjust here
+                // Otherwise, this condition can be removed if you're not appending the cover field
+            }
 
-                // API request URL
-                const url = this.isEditMode ? `/api/books/${this.bookId}` : '/api/books';
+            // Add the _method field in edit mode to indicate a PUT request
+            if (this.isEditMode) {
+                formData.append('_method', 'PUT');
+            }
 
-                // Send the request
-                const response = await fetch(url, {
-                    method: 'POST',
+            try {
+                const response = await fetch(this.isEditMode ? `/api/books/${this.editedBook.id}` : '/api/books', {
+                    method: 'POST', // Use POST due to _method override
                     body: formData,
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -183,7 +185,6 @@ export default {
                 });
 
                 const responseData = await response.json();
-
                 if (response.ok) {
                     this.$emit('book-saved', { book: responseData, isNew: !this.isEditMode });
                     this.closeModal();
@@ -193,8 +194,7 @@ export default {
             } catch (error) {
                 console.error('Error saving book:', error);
             }
-        }
-        ,
+        },
 
         handleFileChange(event) {
             this.editedBook.newCover = event.target.files[0];

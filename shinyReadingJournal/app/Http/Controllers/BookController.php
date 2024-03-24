@@ -103,10 +103,12 @@ class BookController extends Controller
 
         if ($request->hasFile('cover')) {
             $cover = $request->file('cover');
-            $coverPath = $cover->store('covers', 'public');  // Store the uploaded file
+            $coverPath = $cover->store('covers', 'public');
 
-            $validatedData['cover'] = $coverPath;
+            $validatedData['cover'] = Str::replaceFirst('public/', '', $coverPath);
         }
+
+
 
         $existingBook = Book::where('title', $validatedData['title'])
             ->where('author', $validatedData['author'])
@@ -141,33 +143,21 @@ class BookController extends Controller
             'title' => 'string',
             'author' => 'string',
             'series' => 'string|nullable',
-//            'read_at' =>'date|nullable'
-            //'cover' => 'nullable|sometimes|image|mimes:jpeg,bmp,png,jpg,svg|max:2000',
+//            'read_at' =>'date|nullable',
+            'cover' => 'nullable|string' // Ensure 'cover' is included here
         ]);
 
-        if ($request->hasFile('cover')) {
-            // Delete the old cover image if it exists
-            if ($book->cover && Storage::disk('public')->exists($book->cover)) {
-                Storage::disk('public')->delete($book->cover);
-            }
-
-            $cover = $request->file('cover');
-            $coverPath = $cover->store('covers', 'public');
-
-            $data['cover'] = $coverPath;
+        if ($request->has('cover')) {
+            $data['cover'] = $request->cover;
         }
 
-        Log::info('Received update data:', $request->all());
-
         $book->update($data);
-        Log::info('Book data after update:', $book->toArray());
 
-        $bookData = $book->fresh(); // Reload the updated book from the database
-        Log::info('Refreshed book data:', $book->toArray());
+        Log::info('Updated book data with new cover:', $book->toArray());
 
-
-        return response()->json(['data' => $bookData, 'message' => 'Book updated successfully']);
+        return response()->json(['data' => $book->fresh(), 'message' => 'Book updated successfully']);
     }
+
 
 
     public function rate(Request $request, $id)
@@ -186,7 +176,6 @@ class BookController extends Controller
 
         Log::info('Received update data:', ['rating' => $rating]);
 
-        // Assuming you have an authenticated user
         $user = auth()->user();
         Log::info('Book ID:', ['id' => $book->id]);
 
