@@ -5,7 +5,11 @@ import axios from 'axios';
 
 
 const props = defineProps({
-    book: Object
+    book: Object,
+    showControls: {
+        type: Boolean,
+        default: false,
+    },
 });
 const emit = defineEmits(['editBook', 'removeBook', 'updateStatus']);
 
@@ -84,29 +88,32 @@ const formatDate = (dateString) => {
                         <h5>{{ props.book.author }}</h5>
                         <p class="series">{{ props.book.series }}</p>
                     </div>
-                    <span>
-                    Status:
-                     <v-select
-                         class="form-select mb-3 mt-2"
-                         v-if="props.book && props.book.pivot"
-                         v-model="props.book.pivot.status"
-                         :items="['Unread', 'Reading', 'Read']"
-                         @update:modelValue="updateStatus"
-                     ></v-select>
+                    <div v-if="showControls">
+                        <span>
+                        Status:
+                             <v-select
+                                 class="form-select mb-3 mt-2"
+                                 v-if="props.book && props.book.pivot"
+                                 v-model="props.book.pivot.status"
+                                 :items="['Unread', 'Reading', 'Read']"
+                                 @update:modelValue="updateStatus"
+                             ></v-select>
 
-                    <vue3-star-ratings
-                            class="mb-3"
-                            v-if="props.book && props.book.pivot && (props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read')"
-                            v-model="computedRating"
-                    />
-                     <p v-if="props.book && props.book.pivot && props.book.pivot.status === 'Read'">
-                          Read at: {{ formatDate(props.book.pivot.read_at) }}
-                     </p>
-                </span>
-                    <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
-                    <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">
-                        <i class="fa fa-pencil"></i>
-                    </v-btn>
+                            <vue3-star-ratings
+                                    class="mb-3"
+                                    v-if="props.book && props.book.pivot && (props.book.pivot.status === 'Reading' || props.book.pivot.status === 'Read')"
+                                    v-model="computedRating"
+                            />
+                             <p v-if="props.book && props.book.pivot && props.book.pivot.status === 'Read'">
+                                  Read at: {{ formatDate(props.book.pivot.read_at) }}
+                             </p>
+                        </span>
+
+                        <v-btn variant="tonal" @click="removeBook" class="btn me-2 delete-book-btn">Remove</v-btn>
+                        <v-btn variant="outlined" @click="editBook" class="btn me-2 btn-secondary edit-book-btn">
+                            <i class="fa fa-pencil"></i>
+                        </v-btn>
+                    </div>
                 </div>
             </div>
         </v-sheet>

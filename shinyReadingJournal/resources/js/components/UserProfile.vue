@@ -226,6 +226,7 @@ onMounted(async () => {
                 @edit-book="editBook"
                 @remove-book="removeBook"
                 @updateStatus="updateStatus"
+                :showControls="true"
             />
 
         </v-row>
@@ -239,6 +240,7 @@ onMounted(async () => {
                 @edit-book="editBook"
                 @remove-book="removeBook"
                 @updateStatus="updateStatus"
+                :showControls="true"
             />
         </v-row>
 
@@ -251,6 +253,7 @@ onMounted(async () => {
                 @edit-book="editBook"
                 @remove-book="removeBook"
                 @updateStatus="updateStatus"
+                :showControls="true"
             />
         </v-row>
     </v-container>

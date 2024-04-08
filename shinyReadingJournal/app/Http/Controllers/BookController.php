@@ -237,4 +237,28 @@ class BookController extends Controller
             return response()->json(['error' => 'Some error occurred'], 500);
         }
     }
+
+    public function getPopularBooks()
+    {
+        $popularBooks = Book::withCount('users')
+            ->orderBy('users_count', 'desc')
+            ->take(10)
+            ->get();
+
+        return response()->json($popularBooks);
+    }
+    public function getHighestRatedBooks()
+    {
+        $highestRatedBooks = Book::with('users')
+            ->get()
+            ->sortByDesc(function ($book) {
+                return $book->users->avg('pivot.rating');
+            })
+            ->take(10);
+
+        return response()->json($highestRatedBooks);
+    }
+
+
+
 }

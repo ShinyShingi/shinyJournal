@@ -43,3 +43,6 @@ Route::post('books/{id}', [BookController::class, 'updateBook']);
 Route::get('search', [BookApiController::class, 'openlibrary']);
 Route::post('upload-image', [BookController::class, 'uploadImage']);
 Route::post('/books/{id}/rate', [BookController::class, 'rate']);
+Route::get('/books/popular', [BookController::class, 'getPopularBooks']);
+Route::get('/books/highest-rated', [BookController::class, 'getHighestRatedBooks']);
+
